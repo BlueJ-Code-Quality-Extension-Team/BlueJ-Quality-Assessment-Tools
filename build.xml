@@ -6,10 +6,16 @@
   <property name="authors" value="James Niedfeldt, Jon Bowen, Sky Liu, Travis Rebhan"/>
   <property name="copyright" value="Copyright (c) 2018 by James Niedfeldt, Jon Bowen, Sky Liu, Travis Rebhan"/>
 
+  <!-- REMOVE ME - BlueJ extensions don't have a main method -->
   <property name="mainclass" value="MainSample"/>
+
+  <!-- This is the class that extends the BlueJ extension class -->
+  <property name="extensionEntryClass" value="SimpleExtension"/>
+
   <property name="src" location="src"/>
   <property name="test" location="test"/>
   <property name="lib" location="lib"/>
+  <property name="bluejext.jar" value="${lib}/bluejext.jar" />
 
   <property name="antDirs" location="antDirs"/>
   <property name="build" location="${antDirs}/build"/>
@@ -32,7 +38,7 @@
     <fileset dir="${lib}" includes="**/*.jar"/>
     <pathelement location="${srcBuild}"/>
   </path>
-  
+
   <!-- HTML version -->
   <condition property="html.version" value="-html5" else="">
     <not>
@@ -83,7 +89,7 @@
     <mkdir dir="${srcBuild}"/>
     <javac  srcdir="${src}" 
             destdir="${srcBuild}" 
-            classpathref="classpath.lib"
+            classpath="lib/bluejext.jar"
             debug="on" includeantruntime="false" encoding="cp1252" 
             memoryinitialsize="1024m" memorymaximumsize="1024m" fork="yes">
       <compilerarg value="-Xlint"/>
@@ -99,18 +105,6 @@
       <compilerarg value="-Xlint"/>
     </javac>
   </target>
-
-
-  <!-- RUN THE MAIN METHOD -->
-  <target name="run" depends="compile" description="run program">
-    <java classname="${mainclass}" fork="yes">
-      <classpath>
-        <path refid="classpath.lib"/>
-        <path location="${srcBuild}"/>
-      </classpath>
-    </java>
-  </target>
-
 
   <!-- EXECUTE JUNIT TESTS AND SAVE IN ${junitReports} -->
   <target name="test" depends="compile" description="run junit tests">
@@ -141,12 +135,14 @@
   </target>
 
 
-  <!-- COMPILE TO JAR FILE -->
+<!-- COMPILE TO JAR FILE -->
   <target name="dist" depends="compile" description="generate the distribution" >
     <mkdir dir="${dist}"/>
-    <jar jarfile="${dist}/${ant.project.name}-${DSTAMP}.jar" basedir="${srcBuild}">
+    <jar jarfile="${dist}/${extensionEntryClass}.jar" >
+      <fileset dir="${srcBuild}" />
+      <fileset file="${bluejext.jar}" />
       <manifest>
-        <attribute name="Main-Class" value="${mainclass}" />
+        <attribute name="Main-Class" value="${extensionEntryClass}" />
       </manifest>
     </jar>
   </target>
@@ -291,6 +287,7 @@
 
 
   <!-- JaCoCo -->
+  <!-- https://www.eclemma.org/jacoco/trunk/doc/ant.html -->
   <property name="jacoco.dir" location="lib/jacoco"/>
   <property name="jacoco.result.dir" location="${antDirs}/jacoco"/>
   <property name="jacoco.reports.dir" location="${jacoco.result.dir}/reports"/>
@@ -358,6 +355,7 @@
   <target name="coverage" depends="jacocoClean, testCoverageReport"/>
 
 
+  <!-- Only task that can probably be DELETED depend on this taks -->
   <target name="jacocoCompile">
     <mkdir dir="${jacoco.classes.dir}"/>
 
@@ -367,6 +365,8 @@
   </target>
 
 
+  <!-- I think we can DELETE this one. It's the non-preferred way to use JaCoCo -->
+  <!-- https://www.eclemma.org/jacoco/trunk/doc/ant.html#instrument -->
   <target name="jacocoInstrument" depends="jacocoCompile">
     <jacoco:instrument destdir="${jacoco.instr.dir}">
       <fileset dir="${jacoco.classes.dir}"/>
@@ -374,6 +374,7 @@
   </target>
 
 
+  <!-- BlueJ Extensions have no main method. I think we can DELETE this. -->
   <target name="jacocoTest" depends="jacocoInstrument">
     <java classname="${mainclass}" fork="true">
       <classpath>
@@ -385,6 +386,8 @@
   </target>
 
 
+  <!-- This generates a report from the non-preferred jacoco:instrument taks -->
+  <!-- I think we can DELETE this -->
   <target name="jacocoReport" depends="jacocoTest">
     <jacoco:report>
       <executiondata>
