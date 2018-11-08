@@ -207,6 +207,8 @@ class MenuBuilder extends MenuGenerator {
     
     // The nested class that instantiates the different (simple) menus.
     class SimpleAction extends AbstractAction {
+        static final long serialVersionUID = 1L;
+
         private String msgHeader;
         
         public SimpleAction(String menuName, String msg) {
@@ -220,6 +222,8 @@ class MenuBuilder extends MenuGenerator {
 
     // And the nested class which implements the editor interaction menu
     class EditAction extends AbstractAction {
+        static final long serialVersionUID = 1L;
+
         public EditAction() {
             putValue(AbstractAction.NAME, "Add comment");
         }
