@@ -43,17 +43,32 @@ public class ExtensionMenu extends MenuGenerator
         return item;
     }
 
+    public JMenuItem getClassMenuItem(BClass aClass) {
+        final JMenuItem item = new JMenuItem("PMD");
+        item2.add(new JMenuItem(new PMDaction()));
+        return item;
+    }
+
     /**
      * @see bluej.extensions.MenuGenerator#getMenuItem()
      * @deprecated
      * Deprecated as of BlueJ 1.3.5.
      * Added for compatibility with BlueJ 1.3.0.
      */
-    public JMenuItem getMenuItem() {
+    public JMenuItem getMenuItem1() {
         final JMenuItem item = new JMenuItem("Checkstyle");
         item.addActionListener(new MenuAction());
         return item;
     }
+
+
+    public JMenuItem getMenuItem2() {
+        final JMenuItem item = new JMenuItem("PMD");
+        item.add(new JMenuItem(new PMDaction()));
+        return item;
+    }
+
+
 
     /**
      * Action listener for the Checkstyle menu item.
@@ -70,6 +85,18 @@ public class ExtensionMenu extends MenuGenerator
         public void actionPerformed(ActionEvent aEvent)
         {
             CheckstyleExtension.getInstance().showAuditFrame();
+        }
+    }
+
+    class PMDaction extends AbstracAction 
+    {   
+        /**
+         * Audits the open projects and shows the results.
+         */
+
+        public void actionPerformed(ActionEvent event)
+        {
+            
         }
     }
 }
