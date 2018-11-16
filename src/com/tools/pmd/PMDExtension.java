@@ -1,4 +1,4 @@
-package com.puppycrawl.tools.checkstyle.plugins.bluej;
+package com.tools.pmd;
 
 import bluej.extensions.*;
 import bluej.extensions.event.*;

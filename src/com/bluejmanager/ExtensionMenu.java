@@ -17,7 +17,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ////////////////////////////////////////////////////////////////////////////////
-package com.puppycrawl.tools.checkstyle.plugins.bluej;
+package com.bluejmanager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +26,8 @@ import javax.swing.JMenuItem;
 
 import bluej.extensions.BPackage;
 import bluej.extensions.MenuGenerator;
+
+import com.tools.checkstyle.*;
 
 /**
  * Manages the Checkstyle extension menu item

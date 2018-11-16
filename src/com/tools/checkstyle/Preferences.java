@@ -18,7 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.puppycrawl.tools.checkstyle.plugins.bluej;
+package com.tools.checkstyle;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -32,6 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import bluej.extensions.PreferenceGenerator;
+
+import com.bluejmanager.*;
 
 /**
  * Manages Checkstyle extension panel in BlueJ preferences.

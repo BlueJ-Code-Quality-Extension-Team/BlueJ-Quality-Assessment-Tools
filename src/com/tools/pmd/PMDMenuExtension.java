@@ -1,4 +1,4 @@
-package com.puppycrawl.tools.checkstyle.plugins.bluej;
+package com.tools.pmd;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -1,4 +1,4 @@
-package com.puppycrawl.tools.checkstyle.plugins.bluej;
+package com.tools.pmd;
 
 import java.io.BufferedReader;
 import java.io.IOException;

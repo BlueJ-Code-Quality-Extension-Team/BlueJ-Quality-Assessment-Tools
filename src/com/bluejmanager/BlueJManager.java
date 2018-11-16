@@ -17,7 +17,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ////////////////////////////////////////////////////////////////////////////////
-package com.puppycrawl.tools.checkstyle.plugins.bluej;
+package com.bluejmanager;
 
 import java.awt.Frame;
 import java.awt.Point;
@@ -35,6 +35,8 @@ import bluej.extensions.BlueJ;
 import bluej.extensions.ClassNotFoundException;
 import bluej.extensions.PackageNotFoundException;
 import bluej.extensions.ProjectNotOpenException;
+
+import com.tools.checkstyle.*;
 
 /**
  * Manages the BlueJ object for a BlueJ extension

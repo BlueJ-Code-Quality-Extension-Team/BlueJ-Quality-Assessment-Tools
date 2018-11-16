@@ -1,4 +1,4 @@
-package com.puppycrawl.tools.checkstyle.plugins.bluej;
+package com.tools.pmd;
 import java.util.LinkedList;
 
 import java.io.File;

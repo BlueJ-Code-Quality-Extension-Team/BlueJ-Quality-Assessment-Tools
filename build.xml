@@ -32,7 +32,7 @@
   </path>
 
   <path id="run.classpath">
-    <pathelement location="target/checkstyle" />
+    <pathelement location="target" />
     <path refid="build.classpath" />
   </path>
   
@@ -42,7 +42,7 @@
   </path>
   
   <!-- Ensure all targets are run -->
-  <target name="all" depends="clean, compile.checkstyle, test, build.extension,
+  <target name="all" depends="clean, compile.all, test, build.extension,
   build.bindist, build.srcdist, javadoc" />
   
   <target name="display.classpath" description="Displays the run classpath">
@@ -61,22 +61,41 @@
   <!-- -->
   <!-- COMPILE TARGETS -->
   <!-- -->
-  <target name="compile.checkstyle"
-          description="Compiles the source code">
-    <mkdir dir="target/checkstyle" />
-    <javac srcdir="src/checkstyle"
-           destdir="target/checkstyle"
-           deprecation="on" debug="on"
-           classpathref="build.classpath">
-     <compilerarg value="-Xlint:unchecked"/>
+  <target name="compile.all" description="Compiles the source code" depends="">
+    <mkdir dir="target" />
+    <javac srcdir="src/com"
+           destdir="target"
+           classpathref="build.classpath"
+           deprecation="on" debug="on" includeantruntime="false">
+      <compilerarg value="-Xlint:unchecked"/>
     </javac>
   </target>
+
+  <!-- <target name="compile.checkstyle"
+          description="Compiles the source code">
+    <mkdir dir="target" />
+    <javac srcdir="src/com/tools/checkstyle"
+           destdir="target"
+           classpathref="build.classpath"
+           deprecation="on" debug="on" includeantruntime="false">
+      <compilerarg value="-Xlint:unchecked"/>
+    </javac>
+  </target>
+
+  <target name="compile.com.tools.pmd" description="Compiles the source code">
+    <mkdir dir="target" />
+    <javac srcdir="src/com/tools/pmd"
+           destdir="target"
+           classpathref="build.classpath"
+           deprecation="on" debug="on" includeantruntime="false">
+      <compilerarg value="-Xlint:unchecked"/>
+    </javac>
+  </target> -->
   
   <!-- -->
   <!-- TEST TARGETS -->
   <!-- -->
-  <target name="test" depends="clean, compile.checkstyle"
-          description="Runs Junit tests">
+  <target name="test" depends="clean, compile.all" description="Runs Junit tests">
     <mkdir dir="docs/reports" />
     <junit printsummary="withOutAndErr" haltonfailure="no" showoutput="true">
       <classpath>
@@ -95,14 +114,13 @@
   <!-- -->
   <!-- DIST TARGETS -->
   <!-- -->
-  <target name="build.extension" depends="compile.checkstyle"
-          description="Builds the extension jar file">
+  <target name="build.extension" depends="compile.all" description="Builds the extension jar file">
     <mkdir dir="${dist.dir}" />
     <mkdir dir="${dist.extensions.dir}" />
     <jar jarfile="${dist.extensions.dir}/${extension}.jar"
          manifest="config/manifest.mf"
          update="false">
-      <fileset dir="target/checkstyle"/>
+      <fileset dir="target"/>
       <fileset dir="docs">
         <include name="*.xml"/>
       </fileset>
@@ -191,7 +209,7 @@
           src="${dist.dir}/checkstyle-extension-src-${extension-version}.tar" />
   </target>
 
-  <target name="javadoc" depends="compile.checkstyle"
+  <target name="javadoc" depends="compile.all"
           description="Creates the javadoc html files">
     <mkdir dir="docs/api" />
     <javadoc sourcepath="src/checkstyle" destdir="docs/api"

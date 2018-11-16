@@ -18,7 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.puppycrawl.tools.checkstyle.plugins.bluej;
+package com.tools.checkstyle;
 
 import java.util.ArrayList;
 import java.util.Iterator;
