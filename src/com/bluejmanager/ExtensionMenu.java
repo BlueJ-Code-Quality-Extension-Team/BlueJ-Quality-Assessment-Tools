@@ -22,11 +22,13 @@ package com.bluejmanager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import bluej.extensions.BPackage;
 import bluej.extensions.MenuGenerator;
 
+import com.tools.pmd.PMDaction;
 
 /**
  * Manages the Checkstyle extension menu item
@@ -39,9 +41,18 @@ public class ExtensionMenu extends MenuGenerator
      * @see bluej.extensions.MenuGenerator#getToolsMenuItem(bluej.extensions.BPackage)
      */
     public JMenuItem getToolsMenuItem(BPackage aPackage) {
-        final JMenuItem item = new JMenuItem("Checkstyle");
-        item.addActionListener(new MenuAction());
-        return item;
+        final JMenu extMenu = new JMenu("Quality Tools");
+
+        final JMenuItem checkMenu = new JMenuItem("Checkstyle");
+        checkMenu.addActionListener(new MenuAction());
+
+        final JMenuItem pmdMenu = new JMenuItem("PMD");
+        checkMenu.addActionListener(new PMDaction(aPackage));
+
+        extMenu.add(checkMenu);
+        extMenu.add(pmdMenu);
+
+        return extMenu;
     }
 
     /**
