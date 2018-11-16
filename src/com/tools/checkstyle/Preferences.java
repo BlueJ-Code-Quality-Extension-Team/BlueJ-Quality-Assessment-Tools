@@ -155,7 +155,7 @@ public class Preferences implements PreferenceGenerator
         if (!(mBeforeConfigFileName.equals(afterConfigFileName))
             || !(mBeforePropsFileName.equals(afterPropsFileName)))
         {
-            CheckstyleExtension.getInstance().refreshView();
+            QualityAssessmentExtension.getInstance().refreshView();
         }
     }
 

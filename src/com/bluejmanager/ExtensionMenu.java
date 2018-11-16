@@ -27,7 +27,6 @@ import javax.swing.JMenuItem;
 import bluej.extensions.BPackage;
 import bluej.extensions.MenuGenerator;
 
-import com.tools.checkstyle.*;
 
 /**
  * Manages the Checkstyle extension menu item
@@ -71,7 +70,7 @@ public class ExtensionMenu extends MenuGenerator
          */
         public void actionPerformed(ActionEvent aEvent)
         {
-            CheckstyleExtension.getInstance().showAuditFrame();
+            QualityAssessmentExtension.getInstance().showAuditFrame();
         }
     }
 }

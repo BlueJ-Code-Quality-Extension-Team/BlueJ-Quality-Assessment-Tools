@@ -1,3 +1,2 @@
 Manifest-Version: 1.0
-Main-Class: com.tools.pmd.PMDExtension
-Class-Path: checkstyle/checkstyle-all.jar
+Main-Class: com.bluejmanager.QualityAssessmentExtension
