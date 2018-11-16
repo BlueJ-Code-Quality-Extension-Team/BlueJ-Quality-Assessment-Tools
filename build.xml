@@ -1,4 +1,5 @@
-<project name="bluejcheckstyle" default="build.bindist" basedir=".">
+<project name="bluejcheckstyle" default="all" basedir=".">
+>>>>>>> f6204856379caa7e86c937b77ee82242533da368
 
   <!-- set global properties for this build -->
 
@@ -11,7 +12,6 @@
   <property name="checkstyle-all.jar" value="lib/checkstyle-all.jar" />
   <property name="PMD.jar" value="lib/pmd-core-6.9.0.jar"/>
   <property name="dist.dir" value="target/dist" />
-
   <property name="extension-version" value="5.4.1" />
   <property name="extension" value="checkstyle-extension-${extension-version}" />
 
@@ -35,7 +35,17 @@
     <pathelement location="target/checkstyle" />
     <path refid="build.classpath" />
   </path>
-
+  
+  <path id="lib.classpath">
+    <pathelement location="lib/junit.jar" />
+    <pathelement location="lib/hamcrest-core.jar" />
+  </path>
+  
+  <!-- Ensure all targets are run -->
+  <target name="all" depends="clean, compile.checkstyle, test, build.extension,
+  build.bindist, build.srcdist, javadoc" />
+  
+>>>>>>> f6204856379caa7e86c937b77ee82242533da368
   <target name="display.classpath" description="Displays the run classpath">
     <property name="asd" refid="run.classpath" />
     <echo message="Classpath is ${asd}" />
@@ -46,20 +56,25 @@
   <!-- -->
   <target name="clean" description="Cleans any directories and generated files">
     <delete dir="target" />
-  </target>
 
   <!-- -->
-  <!-- COMPILE TARGETS -->
+  <!-- TEST TARGETS -->
   <!-- -->
-  <target name="compile.checkstyle"
-          description="Compiles the source code">
-    <mkdir dir="target/checkstyle" />
-    <javac srcdir="src/checkstyle"
-           destdir="target/checkstyle"
-           deprecation="on" debug="on"
-           classpathref="build.classpath">
-     <compilerarg value="-Xlint:unchecked"/>
-    </javac>
+  <target name="test" depends="clean, compile.checkstyle"
+          description="Runs Junit tests">
+    <mkdir dir="docs/reports" />
+    <junit printsummary="withOutAndErr" haltonfailure="no" showoutput="true">
+      <classpath>
+        <path refid="lib.classpath" />
+        <path location="${build.dir}" />
+      </classpath>
+      <formatter type="xml" />
+      <formatter type="plain" usefile="false" />
+      <formatter type="plain" />
+      <batchtest fork="yes" todir="docs/reports">
+        <fileset dir="src/tests" includes="**/*Test.java" />
+      </batchtest>
+    </junit>
   </target>
 
   <!-- -->
