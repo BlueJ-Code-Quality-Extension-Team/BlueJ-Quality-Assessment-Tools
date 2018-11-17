@@ -12,8 +12,8 @@
   <property name="PMD.jar" value="lib/pmd-core-6.9.0.jar"/>
   <property name="dist.dir" value="target/dist" />
 
-  <property name="extension-version" value="5.4.1" />
-  <property name="extension" value="checkstyle-extension-${extension-version}" />
+  <property name="extension-version" value="0.0.1" />
+  <property name="extension" value="quality-tools-extension-${extension-version}" />
 
   <property name="dist.extensions.dir" value="${dist.dir}/${extension}/lib/extensions"/>
   <property name="dist.docs.dir" value="${dist.dir}/${extension}/docs/extensions/checkstyle"/>

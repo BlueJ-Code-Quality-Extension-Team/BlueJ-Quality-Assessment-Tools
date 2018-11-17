@@ -47,7 +47,7 @@ public class ExtensionMenu extends MenuGenerator
         checkMenu.addActionListener(new MenuAction());
 
         final JMenuItem pmdMenu = new JMenuItem("PMD");
-        checkMenu.addActionListener(new PMDaction(aPackage));
+        pmdMenu.addActionListener(new PMDaction(aPackage));
 
         extMenu.add(checkMenu);
         extMenu.add(pmdMenu);
