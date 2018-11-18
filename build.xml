@@ -8,7 +8,7 @@
 
   <property name="bluejext.jar" value="lib/bluejext.jar" />
   <property name="checkstyle-all.jar" value="lib/checkstyle-all.jar" />
-  <property name="PMD.jar" value="lib/pmd-core-6.9.0.jar"/>
+  <property name="PMD.jar" value="lib/pmd-core-6.7.0.jar"/>
   <property name="dist.dir" value="target/dist" />
 
   <property name="extension-version" value="0.0.1" />

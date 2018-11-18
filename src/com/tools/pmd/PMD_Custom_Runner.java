@@ -16,11 +16,11 @@ public class PMD_Custom_Runner implements PMD_Runner{
     public String runText(String filename){
         return run(filename, "text");
     }
-    public String runHTM(String filename){
-        return run(filename, "htm");
+    public String runHTML(String filename){
+        return run(filename, "html");
     }
     
-    //output format should be "text" or "htm"
+    //output format should be "text" or "html"
     private String run(String FileName, String outputFormat){
         String myCommand = pathToPMD + ",-format," + outputFormat + ",-R,java-quickstart,-version,1.8,-language,java,-d," + FileName;
         ProcessBuilder pb = new ProcessBuilder(myCommand.split(","));
