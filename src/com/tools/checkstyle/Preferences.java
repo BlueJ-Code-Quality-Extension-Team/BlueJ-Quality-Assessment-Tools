@@ -94,7 +94,6 @@ public class Preferences implements PreferenceGenerator
         }
     }
 
-
     /**
      * Creates a <code>Preferences</code> object that manages
      * the Checkstyle extension panel of the BlueJ Preferences dialog.
@@ -142,9 +141,9 @@ public class Preferences implements PreferenceGenerator
         // save the preference values in the BlueJ properties file
         final BlueJManager manager = BlueJManager.getInstance();
         final String afterConfigFileName = mConfigFileTextField.getText();
-        manager.saveConfigFileName(afterConfigFileName);
+        Settings.saveConfigFileName(afterConfigFileName);
         final String afterPropsFileName = mPropsFileTextField.getText();
-        manager.savePropsFileName(afterPropsFileName);
+        Settings.savePropsFileName(afterPropsFileName);
 
         // changes?
         if (!(mBeforeConfigFileName.equals(afterConfigFileName))
@@ -159,8 +158,8 @@ public class Preferences implements PreferenceGenerator
     {
         final BlueJManager manager = BlueJManager.getInstance();
 
-        mBeforeConfigFileName = manager.getConfigFileName();
-        mBeforePropsFileName = manager.getPropsFileName();
+        mBeforeConfigFileName = Settings.getConfigFileName();
+        mBeforePropsFileName = Settings.getPropsFileName();
         mConfigFileTextField.setText(mBeforeConfigFileName);
         mPropsFileTextField.setText(mBeforePropsFileName);
     }

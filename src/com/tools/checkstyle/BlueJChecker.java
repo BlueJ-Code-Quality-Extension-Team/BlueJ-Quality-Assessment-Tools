@@ -83,7 +83,7 @@ public class BlueJChecker {
         c.setModuleClassLoader(BlueJChecker.class.getClassLoader());
         final Configuration config =
                 ConfigurationLoader.loadConfiguration(
-                        BlueJManager.getInstance().getConfigStream(),
+                        Settings.getConfigStream(),
                         new PropertiesExpander(props),
                         true);
 
@@ -103,11 +103,11 @@ public class BlueJChecker {
     private static Properties getProperties() throws CheckstyleException {
         BlueJManager manager = BlueJManager.getInstance();
 
-        Properties origProps = manager.properties();
+        Properties origProps = manager.getPropertiesAdapter();
         final Properties props = new Properties(origProps);
 
         try {
-            InputStream propStream = manager.getPropertyStream();
+            InputStream propStream = Settings.getPropertyStream();
             if (propStream != null) {
                 props.load(propStream);
             }

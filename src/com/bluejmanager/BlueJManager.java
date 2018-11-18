@@ -20,13 +20,11 @@
 package com.bluejmanager;
 
 import java.awt.Frame;
-import java.awt.Point;
 import java.io.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import bluej.extensions.BClass;
 import bluej.extensions.BPackage;
@@ -35,8 +33,6 @@ import bluej.extensions.BlueJ;
 import bluej.extensions.ClassNotFoundException;
 import bluej.extensions.PackageNotFoundException;
 import bluej.extensions.ProjectNotOpenException;
-
-import com.tools.checkstyle.*;
 
 /**
  * Manages the BlueJ object for a BlueJ extension
@@ -51,25 +47,6 @@ public final class BlueJManager
     /** Base name for extension properties */
     private static final String EXT_BASE = "qualityToolsExtension";
 
-    /** configuration file name key */
-    private static final String CONFIG_FILE_NAME_KEY =
-            EXT_BASE + ".configfile";
-
-    /** properties file name key */
-    private static final String PROPS_FILE_NAME_KEY =
-            EXT_BASE + ".propsfile";
-
-    /** determine whether checkstyle audit window is open */
-    private static final String IS_OPEN_KEY =
-            EXT_BASE + ".frameisopen";
-
-    /** audit window dimensions */
-    private static final String FRAME_DIMENSIONS =
-            EXT_BASE + ".framedimensions";
-
-    /** default configuration file */
-    private static final String DEFAULT_CHECKS_FILE = "default_checks.xml";
-
     /** BlueJ application proxy */
     private BlueJ mBlueJ = null;
 
@@ -81,10 +58,7 @@ public final class BlueJManager
     private Set<String> mMissingResources = new HashSet<String>();
 
     /** A properties facade over mBlueJ.  Initialized lazily. */
-    private BlueJPropertiesAdapter mBlueJProperties;
-
-    /** offset of corner relative to current frame */
-    private static final int FRAME_OFFSET = 20;
+    private BlueJPropertiesAdapter mBlueJPropertiesAdapter;
 
     /**
      * Returns the singleton BlueJManager.
@@ -114,9 +88,9 @@ public final class BlueJManager
     public void setBlueJ(BlueJ aBlueJ)
     {
         mBlueJ = aBlueJ;
-        if (mBlueJProperties != null)
+        if (mBlueJPropertiesAdapter != null)
         {
-            mBlueJProperties.setBlueJ(aBlueJ);
+            mBlueJPropertiesAdapter.setBlueJ(aBlueJ);
         }
     }
 
@@ -242,62 +216,15 @@ public final class BlueJManager
      * Finds the current frame of the BlueJ application.
      * @return the current frame of the BlueJ application.
      */
-    public Properties properties()
+    public Properties getPropertiesAdapter()
     {
-        if (mBlueJProperties == null)
+        if (mBlueJPropertiesAdapter == null)
         {
-            mBlueJProperties =
+            mBlueJPropertiesAdapter =
                 new BlueJPropertiesAdapter(mBlueJ, System.getProperties());
         }
-        return mBlueJProperties;
+        return mBlueJPropertiesAdapter;
     }
-
-
-    /**
-     * Opens a stream connected to the specified configuration file.
-     * @return An input stream connected to the resource, or null if the
-     * resource cannot be opened.
-     */
-    public InputStream getConfigStream()
-    {
-        String description = "quality assessment tools configuration file";
-
-        String checkFile = mBlueJ.getExtensionPropertyString(
-                CONFIG_FILE_NAME_KEY,
-                DEFAULT_CHECKS_FILE);
-
-        InputStream inputStream = getResourceStream(
-            checkFile,
-            DEFAULT_CHECKS_FILE,
-            description
-        );
-
-        return inputStream;
-
-//        return getResourceStream(
-//            mBlueJ.getExtensionPropertyString(
-//                CONFIG_FILE_NAME_KEY, DEFAULT_CHECKS_FILE),
-//                DEFAULT_CHECKS_FILE,
-//                description
-//            );
-    }
-
-
-    /**
-     * Opens a stream connected to the specified configuration file.
-     * @return An input stream connected to the resource, or null if the
-     * resource cannot be opened.
-     */
-    public InputStream getPropertyStream()
-    {
-        return getResourceStream(
-            mBlueJ.getExtensionPropertyString(
-                PROPS_FILE_NAME_KEY, null),
-            null,
-            null
-            );
-    }
-
 
     /**
      * Opens a stream connected to a named resource, which could resolve to
@@ -314,7 +241,7 @@ public final class BlueJManager
      * @return An input stream connected to the resource, or null if the
      * resource (and, if specified, the secondary resource) cannot be opened.
      */
-    private InputStream getResourceStream(
+    public InputStream getResourceStream(
         String name, String defaultName, String description)
     {
         InputStream result = null;
@@ -436,104 +363,32 @@ public final class BlueJManager
         return null;
     }
 
-
     /**
-     * Retrieves the extension configuration file property value.
-     * @return the name of the extension configuration file.
+     * Get a property from the extension property store.
+     * @param propertyName The property to fetch
+     * @param def The default if property is not found
+     * @return The fetched property or default
      */
-    public String getConfigFileName()
-    {
-        return mBlueJ.getExtensionPropertyString(
-            CONFIG_FILE_NAME_KEY, null);
+    public String getExtensionPropertyString(String propertyName, String def){
+        String prop = EXT_BASE + "." + propertyName;
+        return mBlueJ.getExtensionPropertyString(prop, def);
     }
 
     /**
-     * Determines the name of the extension properties file.
-     * @return the name of the extension properties file.
+     * Stores a property in the extension property store.
+     * @param propertyName The name of the property
+     * @param value The value of the property
      */
-    public String getPropsFileName()
-    {
-        return mBlueJ.getExtensionPropertyString(
-            PROPS_FILE_NAME_KEY, null);
+    public void setExtensionPropertyString(String propertyName, String value){
+        String prop = EXT_BASE + "." + propertyName;
+        mBlueJ.setExtensionPropertyString(prop, value);
     }
 
     /**
-     * Saves the name of the configuration file.
-     * @param aName the name of the configuration file.
+     * Exposes the missing resources list
+     * @return The missing resources list
      */
-    public void saveConfigFileName(String aName)
-    {
-        String old = mBlueJ.getExtensionPropertyString(
-            CONFIG_FILE_NAME_KEY, null);
-        if (old != null && !old.equals(""))
-        {
-            mMissingResources.remove(old);
-        }
-        mBlueJ.setExtensionPropertyString(CONFIG_FILE_NAME_KEY, aName);
-    }
-
-    /**
-     * Saves the name of the properties file.
-     * @param aName the name of the properties file.
-     */
-    public void savePropsFileName(String aName)
-    {
-        String old = mBlueJ.getExtensionPropertyString(
-            PROPS_FILE_NAME_KEY, null);
-        if (old != null && !old.equals(""))
-        {
-            mMissingResources.remove(old);
-        }
-        mBlueJ.setExtensionPropertyString(PROPS_FILE_NAME_KEY, aName);
-    }
-
-    /**
-     * Initializes an audit frame from extension properties.
-     * @param aFrame the audit frame to initialize.
-     */
-    public void initAuditFrame(AuditFrame aFrame)
-    {
-        // location and size
-        final String frameDimensions =
-            mBlueJ.getExtensionPropertyString(FRAME_DIMENSIONS, "");
-        if (!frameDimensions.equals(""))
-        {
-            final StringTokenizer tokenizer =
-                new StringTokenizer(frameDimensions);
-            final int x = Integer.parseInt(tokenizer.nextToken());
-            final int y = Integer.parseInt(tokenizer.nextToken());
-            aFrame.setLocation(x, y);
-            // aFrame.setSize(width, height);
-        }
-        else
-        {
-            final Frame bluejFrame = getCurrentFrame();
-            Point corner = new Point(0, 0);
-            if (bluejFrame != null) {
-                corner = bluejFrame.getLocation();
-            }
-            corner.translate(FRAME_OFFSET, FRAME_OFFSET);
-            aFrame.setLocation(corner);
-        }
-        if (Boolean.valueOf(mBlueJ.getExtensionPropertyString(
-            IS_OPEN_KEY, "false")).booleanValue())
-        {
-            aFrame.setVisible(true);
-        }
-    }
-
-    /**
-     * Saves audit frame information in properties.
-     * @param aFrame the frame to save.
-     */
-    public void saveAuditFrame(AuditFrame aFrame)
-    {
-        mBlueJ.setExtensionPropertyString(
-            IS_OPEN_KEY, "" + aFrame.isShowing());
-        final String frameDimensions = (int) aFrame.getLocation().getX() + " "
-            + (int) aFrame.getLocation().getY() + " "
-            + (int) aFrame.getSize().getWidth() + " "
-            + (int) aFrame.getSize().getHeight();
-        mBlueJ.setExtensionPropertyString(FRAME_DIMENSIONS, frameDimensions);
+    public Set<String> getMissingResources(){
+        return mMissingResources;
     }
 }
