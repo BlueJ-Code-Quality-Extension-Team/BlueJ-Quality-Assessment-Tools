@@ -20,13 +20,17 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+/**
+ * 
+ */
 //TODO: Implement Properties and fix file path for command
 public class PMD_Action_Listener implements ActionListener {
+    //Use default or custom setting - will be expanded when properties are up
+    Boolean useDefault = true;
 
     BProject bProject;
     String projectDir;
     String PMDPath;
-    File executable;
     String [] filenames;
     String [] filePaths;
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
@@ -65,9 +69,9 @@ public class PMD_Action_Listener implements ActionListener {
                     filePaths[i] = filenames[i];
                 }catch(Exception e){e.printStackTrace();}
             }
-            executable = getPMDExecuteable();
         }
     }
+
 
     public BClass [] addClasses(BPackage aPackage){
         BClass [] classes;
@@ -84,9 +88,8 @@ public class PMD_Action_Listener implements ActionListener {
         return classes;
     }
     
-    public File getPMDExecuteable(){
-        File executable;
-        executable = new File(projectDir, "pmd-bin-6.9.0");
+    public void getPMDPath(){
+        File executable = new File(projectDir, "pmd-bin-6.9.0");
         if (isWindows()) {
             executable = new File(executable, "bin/pmd.bat");
         } else {
@@ -94,11 +97,17 @@ public class PMD_Action_Listener implements ActionListener {
         }
         PMDPath = executable.getAbsolutePath();
 
-        return executable;
     }
     public void actionPerformed(ActionEvent event){
+        PMD_Runner runner;
+        if(useDefault == false){
+            getPMDPath();
+            runner = PMD_Runner_Factory.getPMDRunner(PMDPath);
 
-        PMD_Runner runner = PMD_Runner_Factory.getPMDRunner(PMDPath);
+        }
+        else
+            runner = PMD_Runner_Factory.getPMDRunner();
+
         StringBuilder msg = new StringBuilder("Any problems found are displayed below:");
         msg.append(LINE_SEPARATOR);
         for(int i = 0; i < filenames.length; i++){
