@@ -28,7 +28,7 @@ import javax.swing.JMenuItem;
 import bluej.extensions.BPackage;
 import bluej.extensions.MenuGenerator;
 
-import com.tools.pmd.PMDaction;
+import com.tools.pmd.PMD_Action_Listener;
 
 /**
  * Manages the Checkstyle extension menu item
@@ -47,7 +47,7 @@ public class ExtensionMenu extends MenuGenerator
         checkMenu.addActionListener(new MenuAction());
 
         final JMenuItem pmdMenu = new JMenuItem("PMD");
-        pmdMenu.addActionListener(new PMDaction(aPackage));
+        pmdMenu.addActionListener(new PMD_Action_Listener(aPackage));
 
         extMenu.add(checkMenu);
         extMenu.add(pmdMenu);

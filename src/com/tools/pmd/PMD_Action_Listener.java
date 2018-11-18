@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.AbstractAction;
 
-import net.sourceforge.pmd.PMDConfiguration;
 import bluej.extensions.*;
 
 import java.awt.event.ActionEvent;
@@ -22,7 +21,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 //TODO: Implement Properties and fix file path for command
-public class PMDaction implements ActionListener {
+public class PMD_Action_Listener implements ActionListener {
+
     BProject bProject;
     String projectDir;
     String PMDPath;
@@ -33,7 +33,7 @@ public class PMDaction implements ActionListener {
     private static String OS = System.getProperty("os.name").toLowerCase();
 
 
-    public PMDaction(BPackage aPackage){
+    public PMD_Action_Listener(BPackage aPackage){
         try{
             this.bProject = aPackage.getProject();
             projectDir=bProject.getDir().toString();
@@ -41,18 +41,10 @@ public class PMDaction implements ActionListener {
         catch(Exception e){
             e.printStackTrace();
         }
-        FileSystem fs = FileSystems.getDefault();
-        PathMatcher pmdMatcher = fs.getPathMatcher("glob:pmd*");
+
         BClass [] classes;
-        try{
-            classes = aPackage.getClasses();
-        }catch(ProjectNotOpenException e){
-            classes = null;
-            e.printStackTrace();
-        }catch(PackageNotFoundException e){
-            classes = null;
-            e.printStackTrace();
-        }
+        classes = addClasses(aPackage);
+
         if(classes != null){
             filenames = new String[classes.length];
             filePaths = new String[classes.length];
@@ -73,23 +65,44 @@ public class PMDaction implements ActionListener {
                     filePaths[i] = filenames[i];
                 }catch(Exception e){e.printStackTrace();}
             }
-
-            executable = new File(projectDir, "pmd-bin-6.9.0");
-            if (isWindows()) {
-                executable = new File(executable, "bin/pmd.bat");
-            } else {
-                executable = new File(executable, "bin/run.sh");
-            }
-            PMDPath = executable.getAbsolutePath();
+            executable = getPMDExecuteable();
         }
     }
 
+    public BClass [] addClasses(BPackage aPackage){
+        BClass [] classes;
+        try{
+            classes = aPackage.getClasses();
+        }catch(ProjectNotOpenException e){
+            classes = null;
+            e.printStackTrace();
+        }catch(PackageNotFoundException e){
+            classes = null;
+            e.printStackTrace();
+        }
+
+        return classes;
+    }
+    
+    public File getPMDExecuteable(){
+        File executable;
+        executable = new File(projectDir, "pmd-bin-6.9.0");
+        if (isWindows()) {
+            executable = new File(executable, "bin/pmd.bat");
+        } else {
+            executable = new File(executable, "bin/run.sh");
+        }
+        PMDPath = executable.getAbsolutePath();
+
+        return executable;
+    }
     public void actionPerformed(ActionEvent event){
-        PMDrunner runner = new PMDrunner(PMDPath);
+
+        PMD_Runner runner = PMD_Runner_Factory.getPMDRunner(PMDPath);
         StringBuilder msg = new StringBuilder("Any problems found are displayed below:");
         msg.append(LINE_SEPARATOR);
         for(int i = 0; i < filenames.length; i++){
-            String output = runner.run(filePaths[i]);
+            String output = runner.runText(filePaths[i]);
             msg.append(output);
             msg.append(LINE_SEPARATOR);
         }

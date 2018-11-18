@@ -5,20 +5,23 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 //
-class PMDrunner{
+public class PMD_Custom_Runner implements PMD_Runner{
     String pathToPMD;
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    public PMDrunner(String pathToPMD){
+    public PMD_Custom_Runner(String pathToPMD){
         this.pathToPMD = pathToPMD;
     }
 
-    public String run(String FileName){
-        return run(FileName, "text");
+    public String runText(String filename){
+        return run(filename, "text");
     }
-
+    public String runHTM(String filename){
+        return run(filename, "htm");
+    }
+    
     //output format should be "text" or "htm"
-    public String run(String FileName, String outputFormat){
+    private String run(String FileName, String outputFormat){
         String myCommand = pathToPMD + ",-format," + outputFormat + ",-R,java-quickstart,-version,1.8,-language,java,-d," + FileName;
         ProcessBuilder pb = new ProcessBuilder(myCommand.split(","));
         pb.redirectErrorStream(false);
@@ -58,7 +61,7 @@ class PMDrunner{
     public static void main(String[]args){
         String pathToPMD = args[0];
         String FileName = args[1];
-        PMDrunner runner = new PMDrunner(pathToPMD);
+        PMD_Custom_Runner runner = new PMD_Custom_Runner(pathToPMD);
         System.out.println(runner.run(FileName, "text"));
     }
 }
