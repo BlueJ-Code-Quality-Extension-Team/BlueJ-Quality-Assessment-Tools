@@ -49,7 +49,7 @@ public class FilesChangeListener implements ActionListener
                 mFiles = openFiles;
                 final BlueJChecker checker = new BlueJChecker();
                 final Auditor auditor = checker.process(openFiles);
-                QualityAssessmentExtension.getInstance().viewAudit(auditor);
+                QualityAssessmentExtension.getInstance().mCheckstyleUI.viewAudit(auditor);
             }
         }
         catch (Exception ex)

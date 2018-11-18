@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// BlueJ Checkstyle extension:
+// BlueJ Quality Extension Tools extension:
 //    Checks Java source code for adherence to a set of rules.
 // Copyright (C) 2003-2004  Rick Giles
 //
@@ -22,32 +22,18 @@ package com.bluejmanager;
 
 import java.awt.Frame;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogConfigurationException;
 import org.apache.commons.logging.LogFactory;
 
-import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
-
 import bluej.extensions.BlueJ;
 import bluej.extensions.Extension;
-import bluej.extensions.event.ApplicationEvent;
-import bluej.extensions.event.ApplicationListener;
-import bluej.extensions.event.CompileEvent;
-import bluej.extensions.event.CompileListener;
-import bluej.extensions.event.PackageEvent;
-import bluej.extensions.event.PackageListener;
 
 import com.tools.checkstyle.*;
 
@@ -60,35 +46,23 @@ import com.tools.checkstyle.*;
 public class QualityAssessmentExtension extends Extension
 {
     /** true if the log factory has been initialized */
-    private boolean mInitialized = false;
+    public static boolean mLogInitialized = false;
 
     /** Factory for creating org.apache.commons.logging.Log instances */
-    private LogFactory mLogFactory;
-
-    /** interval between audit checks (milliseconds) */
-    private static final int AUDIT_CHECK_INTERVAL = 2000;
+    public static LogFactory mLogFactory;
 
     /** singleton */
     private static QualityAssessmentExtension sInstance;
 
-    /** Periodically checks for file set changes. */
-    private Timer mTimer;
-
-    /** BlueJ tools menu item for Checkstyle */
+    /** BlueJ tools menu item for Quality Assessment Tools */
     private ExtensionMenu mMenu;
-
-    /** display audit results */
-    private AuditFrame mFrame = null;
-
-    /** files being compiled */
-    private Set<File> mCompilingFiles = new HashSet<File>();
 
     /** extension name */
     private static final String NAME = "Quality Assessment Tools";
 
     /** extension description */
     private static final String DESCRIPTION =
-        "Includes various tools to analyze Java source code.";
+        "Various tools to analyze Java source code.";
 
     /**  extension version */
     private static final String VERSION = "0.0.1";
@@ -98,97 +72,8 @@ public class QualityAssessmentExtension extends Extension
         "https://github.com/BlueJ-Code-Quality-Extension-" +
                 "Team/BlueJ-Quality-Assessment-Tools/";
 
-    /** @see bluej.extensions.event.PackageListener */
-    private class CheckstylePackageListener implements PackageListener
-    {
-        /** @see bluej.extensions.event.PackageListener */
-        public void packageOpened(PackageEvent aEvent)
-        {
-            // refreshView();
-        }
-
-        /** @see bluej.extensions.event.PackageListener */
-        public void packageClosing(PackageEvent aEvent)
-        {
-            // refreshView();
-        }
-    }
-
-    /** @see bluej.extensions.event.CompileListener */
-    private class CheckstyleCompileListener implements CompileListener
-    {
-        /** @see bluej.extensions.event.CompileListener */
-        public void compileStarted(CompileEvent aEvent)
-        {
-            recordCompileStart(aEvent.getFiles());
-        }
-
-        /**
-         * Records the start of compilation of a set of files.
-         * @param aFiles the set of files being compiled.
-         */
-        private void recordCompileStart(File[] aFiles)
-        {
-            for (int i = 0; i < aFiles.length; i++) {
-                mCompilingFiles.add(aFiles[i]);
-            }
-            updateTimer();
-        }
-
-        /** @see bluej.extensions.event.CompileListener */
-        public void compileError(CompileEvent aEvent)
-        {
-            recordCompileEnd(aEvent.getFiles());
-        }
-
-        /**
-         * Records the end of compilation of a set of files.
-         * @param aFiles the set of files ending compilation.
-         */
-        private void recordCompileEnd(File[] aFiles)
-        {
-            for (int i = 0; i < aFiles.length; i++) {
-                mCompilingFiles.remove(aFiles[i]);
-            }
-            updateTimer();
-        }
-
-        /** @see bluej.extensions.event.CompileListener */
-        public void compileWarning(CompileEvent aEvent)
-        {
-            recordCompileEnd(aEvent.getFiles());
-        }
-
-        /** @see bluej.extensions.event.CompileListener */
-        public void compileSucceeded(CompileEvent aEvent)
-        {
-            recordCompileEnd(aEvent.getFiles());
-            if (mCompilingFiles.isEmpty()) {
-                refreshView();
-            }
-        }
-
-        /** @see bluej.extensions.event.CompileListener */
-        public void compileFailed(CompileEvent aEvent)
-        {
-            recordCompileEnd(aEvent.getFiles());
-        }
-    }
-
-    /** @see bluej.extensions.event.ApplicationListener */
-    private class CheckstyleApplicationListener implements ApplicationListener
-    {
-
-        /**
-         * Initializes the audit window.
-         * @see bluej.extensions.event.ApplicationListener
-         */
-        public void blueJReady(ApplicationEvent aEvent)
-        {
-            buildAuditFrame();
-            refreshView();
-        }
-    }
+    /** Handles display and events for checkstyle tool */
+    public com.tools.checkstyle.UI mCheckstyleUI;
 
    /**
      * Returns the single QualityAssessmentExtension instance.
@@ -204,15 +89,11 @@ public class QualityAssessmentExtension extends Extension
      */
     public QualityAssessmentExtension()
     {
-        // establish singleton extension
-        sInstance = this;
-
-        final ActionListener listener = new FilesChangeListener();
-        mTimer = new Timer(AUDIT_CHECK_INTERVAL, listener);
+        sInstance = this; // establish singleton extension
 
         try {
             mLogFactory = LogFactory.getFactory();
-            mInitialized = true;
+            mLogInitialized = true;
         }
         catch (LogConfigurationException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
@@ -220,24 +101,6 @@ public class QualityAssessmentExtension extends Extension
         }
     }
 
-    /**
-     * Starts or stops timer.
-     */
-    private void updateTimer()
-    {
-        if (mCompilingFiles.isEmpty() && mFrame.isShowing()) {
-            mTimer.start();
-        }
-        else {
-            mTimer.stop();
-        }
-    }
-
-    /** @see bluej.extensions.Extension#isCompatible() */
-    public boolean isCompatible()
-    {
-        return true;
-    }
 
     /** @see bluej.extensions.Extension#startup(bluej.extensions.BlueJ) */
     public void startup(BlueJ aBlueJ)
@@ -245,10 +108,8 @@ public class QualityAssessmentExtension extends Extension
         // establish singleton manager for the BlueJ application proxy
         BlueJManager.getInstance().setBlueJ(aBlueJ);
 
-        // register listeners
-        aBlueJ.addApplicationListener(new CheckstyleApplicationListener());
-        aBlueJ.addPackageListener(new CheckstylePackageListener());
-        aBlueJ.addCompileListener(new CheckstyleCompileListener());
+        mCheckstyleUI = UI.getCheckstyleUI();
+        mCheckstyleUI.addListeners(aBlueJ);
 
         // install menu item
         mMenu = new ExtensionMenu();
@@ -257,8 +118,6 @@ public class QualityAssessmentExtension extends Extension
         // install preferences handler
         Preferences myPreferences = new Preferences();
         aBlueJ.setPreferenceGenerator(myPreferences);
-
-        mTimer.start();
     }
 
     /**
@@ -267,104 +126,7 @@ public class QualityAssessmentExtension extends Extension
      */
     public void terminate()
     {
-        BlueJManager.getInstance().saveAuditFrame(mFrame);
-        mCompilingFiles.clear();
-        mTimer.stop();
-    }
-
-    /**
-     * Refreshes the audit view. If there is an error, report it.
-     */
-    public void refreshView()
-    {
-        if (mFrame.isShowing()) {
-            final BlueJChecker checker = new BlueJChecker();
-            final Auditor auditor;
-            try {
-                auditor = checker.processAllFiles();
-            }
-            catch (CheckstyleException ex) {
-                error(ex);
-                return;
-            }
-            viewAudit(auditor);
-        }
-    }
-
-    /**
-     * Creates and installs an audit frame
-     */
-    private synchronized void buildAuditFrame()
-    {
-        /** @see java.awt.event.WindowAdapter */
-        final class AuditFrameListener extends WindowAdapter
-        {
-            /** @see java.awt.event.WindowListener */
-            public void windowOpened(WindowEvent aEvent)
-            {
-                updateTimer();
-            }
-
-            /** @see java.awt.event.WindowListener */
-            public void windowClosed(WindowEvent aEvent)
-            {
-                updateTimer();
-            }
-
-            /** @see java.awt.event.WindowListener */
-            public void windowIconified(WindowEvent aEvent)
-            {
-                updateTimer();
-            }
-
-            /** @see java.awt.event.WindowListener */
-            public void windowDeiconified(WindowEvent aEvent)
-            {
-                updateTimer();
-            }
-        }
-
-        if (mFrame == null) {
-            mFrame = new AuditFrame();
-            mFrame.addWindowListener(new AuditFrameListener());
-            BlueJManager.getInstance().initAuditFrame(mFrame);
-            mFrame.pack();
-        }
-    }
-
-    /**
-     * Shows the audit frame.
-     */
-    public void showAuditFrame()
-    {
-        buildAuditFrame();
-        mFrame.setVisible(true);
-        refreshView();
-    }
-
-    /**
-     * Updates view of audit results.
-     * @param aAuditor the auditor with audit results
-     */
-    public synchronized void viewAudit(final Auditor aAuditor)
-    {
-        // execute on the application's event-dispatch thread
-        final Runnable update = new Runnable()
-        {
-            public void run()
-            {
-                if (mFrame != null) {
-                    mFrame.setAuditor(aAuditor);
-                }
-            }
-        };
-        SwingUtilities.invokeLater(update);
-    }
-
-    /** @see bluej.extensions.Extension#getName() */
-    public String getName()
-    {
-        return NAME;
+        mCheckstyleUI.terminate();
     }
 
     /** @see bluej.extensions.Extension#getDescription() */
@@ -373,10 +135,10 @@ public class QualityAssessmentExtension extends Extension
         return DESCRIPTION;
     }
 
-    /** @see bluej.extensions.Extension#getVersion() */
-    public String getVersion()
+    /** @see bluej.extensions.Extension#getName() */
+    public String getName()
     {
-        return VERSION;
+        return NAME;
     }
 
     /** @see bluej.extensions.Extension#getURL() */
@@ -391,15 +153,28 @@ public class QualityAssessmentExtension extends Extension
         }
         return result;
     }
+
+    /** @see bluej.extensions.Extension#getVersion() */
+    public String getVersion()
+    {
+        return VERSION;
+    }
+
+    /** @see bluej.extensions.Extension#isCompatible() */
+    public boolean isCompatible()
+    {
+        return true;
+    }
+
     /**
      * Reports an error message.
      * @param aMessage the message to report.
      */
-    public void error(String aMessage)
+    public static void error(String aMessage)
     {
         Frame frame = BlueJManager.getInstance().getCurrentFrame();
         JOptionPane.showMessageDialog(frame, aMessage);
-        if (mInitialized) {
+        if (mLogInitialized) {
             final Log log = mLogFactory.getInstance(QualityAssessmentExtension.class);
             log.info(aMessage);
         }
@@ -412,7 +187,7 @@ public class QualityAssessmentExtension extends Extension
      * Reports an exception.
      * @param aException the exception to report.
      */
-    public void error(Exception aException)
+    public static void error(Exception aException)
     {
         aException.printStackTrace();
         error("" + aException);
