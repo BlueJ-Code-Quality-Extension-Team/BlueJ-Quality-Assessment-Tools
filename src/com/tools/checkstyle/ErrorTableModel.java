@@ -26,63 +26,65 @@ import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 
 /**
  * Model for error table of AuditFrame.
+ *
  * @author Rick Giles
  * @version $Id: ErrorTableModel.java,v 1.5 2007/08/19 03:13:52 stedwar2 Exp $
  */
-public class ErrorTableModel extends AbstractTableModel
-{
+public class ErrorTableModel extends AbstractTableModel {
+    /**
+     * names for column headers
+     */
+    private static final String[] COLUMN_NAMES = {"Line", "Column", "Error"};
 
-
-    /** names for column headers */
-    private static final String[] COLUMN_NAMES =
-        {"Line", "Column", "Error"};
-
-
-    /** events reported by the model */
+    /**
+     * events reported by the model
+     */
     private AuditEvent[] mEvents = new AuditEvent[0];
 
     /**
      * Sets the events for the model.
+     *
      * @param aEvents events for the model.
      */
-    public void setEvents(AuditEvent[] aEvents)
-    {
+    public void setEvents(AuditEvent[] aEvents) {
         mEvents = aEvents;
         fireTableDataChanged();
     }
 
-
-    /** @see javax.swing.table.TableModel#getRowCount() */
-    public int getRowCount()
-    {
+    /**
+     * @see javax.swing.table.TableModel#getRowCount()
+     */
+    public int getRowCount() {
         return mEvents.length;
     }
 
-    /** @see javax.swing.table.TableModel#getColumnCount() */
-    public int getColumnCount()
-    {
+    /**
+     * @see javax.swing.table.TableModel#getColumnCount()
+     */
+    public int getColumnCount() {
         return COLUMN_NAMES.length;
     }
 
-    /** @see javax.swing.table.TableModel#getColumnName(int) */
-    public String getColumnName(int aCol)
-    {
+    /**
+     * @see javax.swing.table.TableModel#getColumnName(int)
+     */
+    public String getColumnName(int aCol) {
         return COLUMN_NAMES[aCol];
     }
 
-
-    /** @see javax.swing.table.TableModel#getValueAt(int, int) */
-    public Object getValueAt(int aRow, int aCol)
-    {
+    /**
+     * @see javax.swing.table.TableModel#getValueAt(int, int)
+     */
+    public Object getValueAt(int aRow, int aCol) {
         switch (aCol) {
-        case 0:
-            return ("" + mEvents[aRow].getLine());
-        case 1:
-            return "" + mEvents[aRow].getColumn();
-        case 2:
-            return mEvents[aRow].getMessage();
-        default:
-            return null;
+            case 0:
+                return ("" + mEvents[aRow].getLine());
+            case 1:
+                return "" + mEvents[aRow].getColumn();
+            case 2:
+                return mEvents[aRow].getMessage();
+            default:
+                return null;
         }
     }
 

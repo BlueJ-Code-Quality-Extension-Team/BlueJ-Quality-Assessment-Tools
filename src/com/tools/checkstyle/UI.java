@@ -114,10 +114,9 @@ public class UI {
     public void refreshView()
     {
         if (mFrame.isShowing()) {
-            final BlueJChecker checker = new BlueJChecker();
             final Auditor auditor;
             try {
-                auditor = checker.processAllFiles();
+                auditor = BlueJChecker.processAllFiles();
             }
             catch (CheckstyleException ex) {
                 QualityAssessmentExtension.error(ex);
@@ -208,7 +207,28 @@ public class UI {
         }
 
         /** @see bluej.extensions.event.CompileListener */
+        public void compileSucceeded(CompileEvent aEvent)
+        {
+            recordCompileEnd(aEvent.getFiles());
+            if (mCompilingFiles.isEmpty()) {
+                refreshView();
+            }
+        }
+
+        /** @see bluej.extensions.event.CompileListener */
         public void compileError(CompileEvent aEvent)
+        {
+            recordCompileEnd(aEvent.getFiles());
+        }
+
+        /** @see bluej.extensions.event.CompileListener */
+        public void compileWarning(CompileEvent aEvent)
+        {
+            recordCompileEnd(aEvent.getFiles());
+        }
+
+        /** @see bluej.extensions.event.CompileListener */
+        public void compileFailed(CompileEvent aEvent)
         {
             recordCompileEnd(aEvent.getFiles());
         }
@@ -223,27 +243,6 @@ public class UI {
                 mCompilingFiles.remove(aFiles[i]);
             }
             updateTimer();
-        }
-
-        /** @see bluej.extensions.event.CompileListener */
-        public void compileWarning(CompileEvent aEvent)
-        {
-            recordCompileEnd(aEvent.getFiles());
-        }
-
-        /** @see bluej.extensions.event.CompileListener */
-        public void compileSucceeded(CompileEvent aEvent)
-        {
-            recordCompileEnd(aEvent.getFiles());
-            if (mCompilingFiles.isEmpty()) {
-                refreshView();
-            }
-        }
-
-        /** @see bluej.extensions.event.CompileListener */
-        public void compileFailed(CompileEvent aEvent)
-        {
-            recordCompileEnd(aEvent.getFiles());
         }
     }
 

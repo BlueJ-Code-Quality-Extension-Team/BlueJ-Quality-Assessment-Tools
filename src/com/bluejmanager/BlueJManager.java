@@ -48,25 +48,27 @@ public final class BlueJManager
     /** singleton */
     private static BlueJManager sInstance = null;
 
+    /** Base name for extension properties */
+    private static final String EXT_BASE = "qualityToolsExtension";
+
     /** configuration file name key */
     private static final String CONFIG_FILE_NAME_KEY =
-        "qualityToolsExtension.configfile";
+            EXT_BASE + ".configfile";
 
     /** properties file name key */
     private static final String PROPS_FILE_NAME_KEY =
-        "qualityToolsExtension.propsfile";
+            EXT_BASE + ".propsfile";
 
     /** determine whether checkstyle audit window is open */
     private static final String IS_OPEN_KEY =
-        "qualityToolsExtension.frameisopen";
+            EXT_BASE + ".frameisopen";
 
     /** audit window dimensions */
     private static final String FRAME_DIMENSIONS =
-        "qualityToolsExtension.framedimensions";
+            EXT_BASE + ".framedimensions";
 
     /** default configuration file */
-    private static final String DEFAULT_CONFIG_FILE =
-        "default_checks.xml";
+    private static final String DEFAULT_CHECKS_FILE = "default_checks.xml";
 
     /** BlueJ application proxy */
     private BlueJ mBlueJ = null;
@@ -260,12 +262,24 @@ public final class BlueJManager
     {
         String description = "quality assessment tools configuration file";
 
-        return getResourceStream(
-            mBlueJ.getExtensionPropertyString(
-                CONFIG_FILE_NAME_KEY, DEFAULT_CONFIG_FILE),
-                DEFAULT_CONFIG_FILE,
-                description
-            );
+        String checkFile = mBlueJ.getExtensionPropertyString(
+                CONFIG_FILE_NAME_KEY,
+                DEFAULT_CHECKS_FILE);
+
+        InputStream inputStream = getResourceStream(
+            checkFile,
+            DEFAULT_CHECKS_FILE,
+            description
+        );
+
+        return inputStream;
+
+//        return getResourceStream(
+//            mBlueJ.getExtensionPropertyString(
+//                CONFIG_FILE_NAME_KEY, DEFAULT_CHECKS_FILE),
+//                DEFAULT_CHECKS_FILE,
+//                description
+//            );
     }
 
 
@@ -304,7 +318,7 @@ public final class BlueJManager
         String name, String defaultName, String description)
     {
         InputStream result = null;
-        if (name != null && !name.equals(""))
+        if (name != null && !name.isEmpty())
         {
             result = getResourceStream(name);
             if (result == null && defaultName != null && description != null)
@@ -424,8 +438,8 @@ public final class BlueJManager
 
 
     /**
-     * Retrieves the Checkstyle configuration file property value.
-     * @return the name of the Checkstyle configuration file.
+     * Retrieves the extension configuration file property value.
+     * @return the name of the extension configuration file.
      */
     public String getConfigFileName()
     {
@@ -434,8 +448,8 @@ public final class BlueJManager
     }
 
     /**
-     * Determines the name of the Checkstyle properties file.
-     * @return the name of the Checkstyle properties file.
+     * Determines the name of the extension properties file.
+     * @return the name of the extension properties file.
      */
     public String getPropsFileName()
     {
