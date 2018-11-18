@@ -81,7 +81,7 @@ public class ExtensionMenu extends MenuGenerator
          */
         public void actionPerformed(ActionEvent aEvent)
         {
-            QualityAssessmentExtension.getInstance().showAuditFrame();
+            QualityAssessmentExtension.getInstance().mCheckstyleUI.showAuditFrame();
         }
     }
 }

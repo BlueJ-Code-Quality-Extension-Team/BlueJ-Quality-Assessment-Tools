@@ -50,19 +50,19 @@ public final class BlueJManager
 
     /** configuration file name key */
     private static final String CONFIG_FILE_NAME_KEY =
-        "checkstyle.configfile";
+        "qualityToolsExtension.configfile";
 
     /** properties file name key */
     private static final String PROPS_FILE_NAME_KEY =
-        "checkstyle.propsfile";
+        "qualityToolsExtension.propsfile";
 
     /** determine whether checkstyle audit window is open */
     private static final String IS_OPEN_KEY =
-        "checkstyle.frameisopen";
+        "qualityToolsExtension.frameisopen";
 
     /** audit window dimensions */
     private static final String FRAME_DIMENSIONS =
-        "checkstyle.framedimensions";
+        "qualityToolsExtension.framedimensions";
 
     /** default configuration file */
     private static final String DEFAULT_CONFIG_FILE =
@@ -82,7 +82,7 @@ public final class BlueJManager
     private BlueJPropertiesAdapter mBlueJProperties;
 
     /** offset of corner relative to current frame */
-        private static final int FRAME_OFFSET = 20;
+    private static final int FRAME_OFFSET = 20;
 
     /**
      * Returns the singleton BlueJManager.
@@ -138,41 +138,6 @@ public final class BlueJManager
     }
 
     /**
-     * Returns the files for all valid open projects. All project classes
-     * must be compiled.
-     * @return the files for all valid open projects.
-     * @throws ClassNotFoundException if a class is not found.
-     * @throws ProjectNotOpenException if a project is not open.
-     * @throws PackageNotFoundException if a package is not found.
-     */
-    public Set<File> getFiles()
-        throws ClassNotFoundException,
-               ProjectNotOpenException,
-               PackageNotFoundException
-    {
-        final Set<File> result = new HashSet<File>();
-        final Set<BClass> classes = getBClasses();
-        for (Iterator<BClass> iter = classes.iterator(); iter.hasNext();)
-        {
-            BClass theClass = iter.next();
-            final BPackage thePackage = theClass.getPackage();
-            final BProject theProject = thePackage.getProject();
-            final String projectDirName =
-                theProject.getDir().toString().replaceAll("\\\\", "/");
-            String className = theClass.getJavaClass().getName();
-            className = className.replaceAll("\\.", "/");
-            final String fullName =
-                projectDirName + "/" + className + ".java";
-            final File file = new File(fullName);
-            if (file.exists())
-            {
-                result.add(file);
-            }
-        }
-        return result;
-    }
-
-    /**
      * Returns classes for a BlueJ Project.
      * @param aProject BlueJ project.
      * @return The classes for aProject. If aProject is not open, returns
@@ -211,6 +176,41 @@ public final class BlueJManager
         for (int i = 0; i < classes.length; i++)
         {
             result.add(classes[i]);
+        }
+        return result;
+    }
+
+    /**
+     * Returns the files for all valid open projects. All project classes
+     * must be compiled.
+     * @return the files for all valid open projects.
+     * @throws ClassNotFoundException if a class is not found.
+     * @throws ProjectNotOpenException if a project is not open.
+     * @throws PackageNotFoundException if a package is not found.
+     */
+    public Set<File> getFiles()
+            throws ClassNotFoundException,
+            ProjectNotOpenException,
+            PackageNotFoundException
+    {
+        final Set<File> result = new HashSet<File>();
+        final Set<BClass> classes = getBClasses();
+        for (Iterator<BClass> iter = classes.iterator(); iter.hasNext();)
+        {
+            BClass theClass = iter.next();
+            final BPackage thePackage = theClass.getPackage();
+            final BProject theProject = thePackage.getProject();
+            final String projectDirName =
+                    theProject.getDir().toString().replaceAll("\\\\", "/");
+            String className = theClass.getJavaClass().getName();
+            className = className.replaceAll("\\.", "/");
+            final String fullName =
+                    projectDirName + "/" + className + ".java";
+            final File file = new File(fullName);
+            if (file.exists())
+            {
+                result.add(file);
+            }
         }
         return result;
     }
@@ -258,11 +258,13 @@ public final class BlueJManager
      */
     public InputStream getConfigStream()
     {
+        String description = "quality assessment tools configuration file";
+
         return getResourceStream(
             mBlueJ.getExtensionPropertyString(
                 CONFIG_FILE_NAME_KEY, DEFAULT_CONFIG_FILE),
-            DEFAULT_CONFIG_FILE,
-            "checkstyle configuration file"
+                DEFAULT_CONFIG_FILE,
+                description
             );
     }
 
