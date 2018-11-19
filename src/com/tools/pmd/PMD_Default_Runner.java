@@ -19,6 +19,7 @@ public class PMD_Default_Runner implements PMD_Runner{
         PMD pmd = new PMD();
         try {
             File output = new File("pmd-cache.tem");
+            System.out.println(output.getAbsolutePath());
             output.createNewFile();
             String [] args = {"-d ", file.getAbsolutePath(), " -no-cache ", " -f ", format, " -R ", ruleSets, " -r ", output.getAbsolutePath()};
             PMD.run(args);

@@ -113,7 +113,7 @@
   <!-- -->
   <!-- DIST TARGETS -->
   <!-- -->
-  <target name="build.extension" depends="compile.all" description="Builds the extension jar file">
+  <target name="build.extension" depends="clean, compile.all" description="Builds the extension jar file">
     <mkdir dir="${dist.dir}" />
     <mkdir dir="${dist.extensions.dir}" />
     <jar jarfile="${dist.extensions.dir}/${extension}.jar"
@@ -124,7 +124,10 @@
         <include name="*.xml"/>
       </fileset>
       <zipfileset src="${checkstyle-all.jar}">
-        <exclude name="META-INF/"/>
+	<exclude name="META-INF/"/>
+      </zipfileset>
+      <zipfileset src="${PMD.jar}">
+	<exclude name="META-INF/"/>
       </zipfileset>
     </jar>
     <copy todir=".">
