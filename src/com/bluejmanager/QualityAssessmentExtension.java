@@ -21,12 +21,10 @@
 package com.bluejmanager;
 
 import java.awt.Frame;
-import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
-import javax.swing.Timer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogConfigurationException;

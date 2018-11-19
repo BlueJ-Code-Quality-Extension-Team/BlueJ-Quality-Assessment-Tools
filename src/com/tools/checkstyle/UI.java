@@ -7,12 +7,16 @@ import com.bluejmanager.QualityAssessmentExtension;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.StringTokenizer;
+
+public class UI {
 
 public class UI {
 
@@ -30,6 +34,14 @@ public class UI {
 
     /** Interval between audit checks (milliseconds). */
     private static final int AUDIT_CHECK_INTERVAL = 2000;
+
+    private static final String FRAME_DIMENSIONS_KEY = "framedimensions";
+
+    /** offset of corner relative to current frame */
+    private static final int FRAME_OFFSET = 20;
+
+    /** determine whether checkstyle audit window is open */
+    private static final String IS_OPEN_KEY = "frameisopen";
 
     /** Private constructor for singleton. */
     private UI(){
@@ -62,7 +74,6 @@ public class UI {
      */
     public void terminate()
     {
-        BlueJManager.getInstance().saveAuditFrame(mFrame);
         mCompilingFiles.clear();
         mTimer.stop();
     }
@@ -103,9 +114,61 @@ public class UI {
         if (mFrame == null) {
             mFrame = new AuditFrame();
             mFrame.addWindowListener(new AuditFrameListener());
-            BlueJManager.getInstance().initAuditFrame(mFrame);
             mFrame.pack();
         }
+    }
+
+    /**
+     * @param aFrame the audit frame to initialize.
+     */
+    public void initAuditFrame(AuditFrame aFrame)
+    {
+        BlueJManager manager = BlueJManager.getInstance();
+
+        // location and size
+        final String frameDimensions =
+                manager.getExtensionPropertyString(FRAME_DIMENSIONS_KEY, "");
+        if (!frameDimensions.equals(""))
+        {
+            final StringTokenizer tokenizer =
+                    new StringTokenizer(frameDimensions);
+            final int x = Integer.parseInt(tokenizer.nextToken());
+            final int y = Integer.parseInt(tokenizer.nextToken());
+            aFrame.setLocation(x, y);
+            // aFrame.setSize(width, height);
+        }
+        else
+        {
+            final Frame bluejFrame = manager.getCurrentFrame();
+            Point corner = new Point(0, 0);
+            if (bluejFrame != null) {
+                corner = bluejFrame.getLocation();
+            }
+            corner.translate(FRAME_OFFSET, FRAME_OFFSET);
+            aFrame.setLocation(corner);
+        }
+        if (Boolean.valueOf(manager.getExtensionPropertyString(
+                IS_OPEN_KEY, "false")).booleanValue())
+        {
+            aFrame.setVisible(true);
+        }
+    }
+
+    /**
+     * Saves audit frame information in properties.
+     * @param aFrame the frame to save.
+     */
+    public void saveAuditFrame(AuditFrame aFrame)
+    {
+        BlueJManager manager = BlueJManager.getInstance();
+
+        manager.setExtensionPropertyString(
+                IS_OPEN_KEY, "" + aFrame.isShowing());
+        final String frameDimensions = (int) aFrame.getLocation().getX() + " "
+                + (int) aFrame.getLocation().getY() + " "
+                + (int) aFrame.getSize().getWidth() + " "
+                + (int) aFrame.getSize().getHeight();
+        manager.setExtensionPropertyString(FRAME_DIMENSIONS_KEY, frameDimensions);
     }
 
     /**
@@ -114,10 +177,8 @@ public class UI {
     public void refreshView()
     {
         if (mFrame.isShowing()) {
-            final BlueJChecker checker = new BlueJChecker();
-            final Auditor auditor;
             try {
-                auditor = checker.processAllFiles();
+                auditor = BlueJChecker.processAllFiles();
             }
             catch (CheckstyleException ex) {
                 QualityAssessmentExtension.error(ex);
@@ -208,7 +269,28 @@ public class UI {
         }
 
         /** @see bluej.extensions.event.CompileListener */
+        public void compileSucceeded(CompileEvent aEvent)
+        {
+            recordCompileEnd(aEvent.getFiles());
+            if (mCompilingFiles.isEmpty()) {
+                refreshView();
+            }
+        }
+
+        /** @see bluej.extensions.event.CompileListener */
         public void compileError(CompileEvent aEvent)
+        {
+            recordCompileEnd(aEvent.getFiles());
+        }
+
+        /** @see bluej.extensions.event.CompileListener */
+        public void compileWarning(CompileEvent aEvent)
+        {
+            recordCompileEnd(aEvent.getFiles());
+        }
+
+        /** @see bluej.extensions.event.CompileListener */
+        public void compileFailed(CompileEvent aEvent)
         {
             recordCompileEnd(aEvent.getFiles());
         }
@@ -223,27 +305,6 @@ public class UI {
                 mCompilingFiles.remove(aFiles[i]);
             }
             updateTimer();
-        }
-
-        /** @see bluej.extensions.event.CompileListener */
-        public void compileWarning(CompileEvent aEvent)
-        {
-            recordCompileEnd(aEvent.getFiles());
-        }
-
-        /** @see bluej.extensions.event.CompileListener */
-        public void compileSucceeded(CompileEvent aEvent)
-        {
-            recordCompileEnd(aEvent.getFiles());
-            if (mCompilingFiles.isEmpty()) {
-                refreshView();
-            }
-        }
-
-        /** @see bluej.extensions.event.CompileListener */
-        public void compileFailed(CompileEvent aEvent)
-        {
-            recordCompileEnd(aEvent.getFiles());
         }
     }
 

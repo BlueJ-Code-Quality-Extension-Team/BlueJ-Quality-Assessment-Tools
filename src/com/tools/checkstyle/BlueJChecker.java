@@ -20,7 +20,6 @@
 package com.tools.checkstyle;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,32 +38,29 @@ import com.bluejmanager.*;
 
 /**
  * This class provides the functionality to check a set of files.
+ *
  * @author Rick Giles
  * @version $Id: BlueJChecker.java,v 1.9 2011/10/25 05:27:10 stedwar2 Exp $
  */
-public class BlueJChecker
-{
+public class BlueJChecker {
     /**
      * Constructs a <code>BlueJChecker</code>.
      */
-    public BlueJChecker()
-    {
-        // Nothing to do
+    private BlueJChecker() {
     }
 
     /**
      * Audits all files of the open BlueJ packages.
+     *
      * @return an Auditor with the audit results.
      * @throws CheckstyleException if there is an error.
      */
-    public Auditor processAllFiles()
-        throws CheckstyleException
-    {
+    public static Auditor processAllFiles()
+            throws CheckstyleException {
         Set<File> files;
         try {
             files = BlueJManager.getInstance().getFiles();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new CheckstyleException(e.getMessage());
         }
         return process(files);
@@ -72,35 +68,25 @@ public class BlueJChecker
 
     /**
      * Audits a set of files.
+     *
      * @param files the set of files to audit.
      * @return an Auditor with the audit results.
      * @throws CheckstyleException if there is an error.
      */
-    public Auditor process(Set<File> files)
-        throws CheckstyleException
-    {
-        final Properties props =
-            new Properties(BlueJManager.getInstance().properties());
-        try {
-            InputStream propStream =
-                BlueJManager.getInstance().getPropertyStream();
-            if (propStream != null)
-            {
-                props.load(propStream);
-            }
-        }
-        catch (IOException ex) {
-            throw new CheckstyleException(ex.getMessage());
-        }
+    public static Auditor process(Set<File> files)
+            throws CheckstyleException {
+
+        final Properties props = BlueJChecker.getProperties();
 
         // create and configure a Checker
         final Checker c = new Checker();
         c.setModuleClassLoader(BlueJChecker.class.getClassLoader());
         final Configuration config =
-            ConfigurationLoader.loadConfiguration(
-                BlueJManager.getInstance().getConfigStream(),
-                new PropertiesExpander(props),
-                true);
+                ConfigurationLoader.loadConfiguration(
+                        Settings.getConfigStream(),
+                        new PropertiesExpander(props),
+                        true);
+
         c.configure(config);
 
         final AuditListener auditor = new Auditor();
@@ -112,6 +98,24 @@ public class BlueJChecker
         }
         c.destroy();
         return (Auditor) auditor;
+    }
+
+    private static Properties getProperties() throws CheckstyleException {
+        BlueJManager manager = BlueJManager.getInstance();
+
+        Properties origProps = manager.getPropertiesAdapter();
+        final Properties props = new Properties(origProps);
+
+        try {
+            InputStream propStream = Settings.getPropertyStream();
+            if (propStream != null) {
+                props.load(propStream);
+            }
+        } catch (IOException ex) {
+            throw new CheckstyleException(ex.getMessage());
+        }
+
+        return props;
     }
 }
 
