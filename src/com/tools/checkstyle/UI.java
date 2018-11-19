@@ -18,8 +18,6 @@ import java.util.StringTokenizer;
 
 public class UI {
 
-public class UI {
-
     /** Singleton instance. */
     private static UI mInstance;
 
@@ -35,6 +33,7 @@ public class UI {
     /** Interval between audit checks (milliseconds). */
     private static final int AUDIT_CHECK_INTERVAL = 2000;
 
+    /** audit window dimensions */
     private static final String FRAME_DIMENSIONS_KEY = "framedimensions";
 
     /** offset of corner relative to current frame */
@@ -74,6 +73,7 @@ public class UI {
      */
     public void terminate()
     {
+        saveAuditFrame(mFrame);
         mCompilingFiles.clear();
         mTimer.stop();
     }
@@ -114,11 +114,13 @@ public class UI {
         if (mFrame == null) {
             mFrame = new AuditFrame();
             mFrame.addWindowListener(new AuditFrameListener());
+            initAuditFrame(mFrame);
             mFrame.pack();
         }
     }
 
     /**
+     * Initializes an audit frame from extension properties.
      * @param aFrame the audit frame to initialize.
      */
     public void initAuditFrame(AuditFrame aFrame)
@@ -177,6 +179,7 @@ public class UI {
     public void refreshView()
     {
         if (mFrame.isShowing()) {
+            final Auditor auditor;
             try {
                 auditor = BlueJChecker.processAllFiles();
             }
