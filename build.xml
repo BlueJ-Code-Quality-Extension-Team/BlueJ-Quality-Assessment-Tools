@@ -16,6 +16,8 @@
 
   <property name="dist.extensions.dir" value="${dist.dir}/${extension}/lib/extensions"/>
   <property name="dist.docs.dir" value="${dist.dir}/${extension}/docs/extensions/checkstyle"/>
+  <property name="jcommander.jar" value= "lib/jcommander-1.48.jar"/>
+  <property name="commons-lang.jar" value = "lib/commons-lang3-3.7.jar"/>
 
   <!-- add classes to generate Javadoc -->
   <path id="javadoc.classpath">
@@ -127,6 +129,12 @@
 	<exclude name="META-INF/"/>
       </zipfileset>
       <zipfileset src="${PMD.jar}">
+	<exclude name="META-INF/"/>
+      </zipfileset>
+       <zipfileset src="${jcommander.jar}">
+	<exclude name="META-INF/"/>
+      </zipfileset>
+      <zipfileset src="${commons-lang.jar}">
 	<exclude name="META-INF/"/>
       </zipfileset>
     </jar>

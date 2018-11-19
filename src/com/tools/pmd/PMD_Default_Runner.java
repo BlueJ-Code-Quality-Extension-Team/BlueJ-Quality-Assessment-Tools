@@ -18,10 +18,10 @@ public class PMD_Default_Runner implements PMD_Runner{
         String report;
         PMD pmd = new PMD();
         try {
-            File output = new File("pmd-cache.tem");
+            File output;
+            output = File.createTempFile(prefix, suffix);
             System.out.println(output.getAbsolutePath());
-            output.createNewFile();
-            String [] args = {"-d ", file.getAbsolutePath(), " -no-cache ", " -f ", format, " -R ", ruleSets, " -r ", output.getAbsolutePath()};
+            String [] args = {"-d ", file.getAbsolutePath(), " -no-cache ", " -f ", format, " -language ", " java ", " -version ", " 1.8", " -R ", ruleSets, " -r ", output.getAbsolutePath()};
             PMD.run(args);
             BufferedReader br = new BufferedReader(new FileReader(output));
             StringBuilder stringBuilder = new StringBuilder();
