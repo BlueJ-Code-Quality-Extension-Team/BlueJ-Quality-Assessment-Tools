@@ -27,6 +27,7 @@
   <property name="pmd-java.jar" value="${pmd-lib}/pmd-java-6.7.0.jar"/>
   <property name="saxon.jar" value="${pmd-lib}/saxon-9.1.0.8.jar"/>
   <property name="saxondom.jar" value="${pmd-lib}/saxon-9.1.0.8-dom.jar"/>
+  <property name="javacc.jar" value="${pmd-lib}/javacc-5.0.jar"/>
 
   <!-- add classes to generate Javadoc -->
   <path id="javadoc.classpath">
@@ -148,6 +149,7 @@
       <zipfileset src="${pmd-java.jar}" excludes="META-INF/"/>
       <zipfileset src="${saxon.jar}" excludes="META-INF/"/>
       <zipfileset src="${saxondom.jar}" excludes="META-INF/"/>
+      <zipfileset src="${javacc.jar}" excludes="META-INF/" />
       <zipfileset src="${jcommander.jar}" excludes="META-INF/"/>
     </jar>
     <copy todir=".">
