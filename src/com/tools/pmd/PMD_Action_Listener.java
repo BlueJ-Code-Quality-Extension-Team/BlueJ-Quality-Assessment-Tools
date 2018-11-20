@@ -14,12 +14,12 @@ import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.FilenameFilter;
 
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -40,6 +40,9 @@ public class PMD_Action_Listener implements ActionListener {
     private static String OS = System.getProperty("os.name").toLowerCase();
 
 
+    public PMD_Action_Listener(){
+
+    }
     public PMD_Action_Listener(BPackage aPackage){
         String currentDir = System.getProperty("user.dir");
         System.out.println("Current dir using System:" +currentDir);
@@ -112,15 +115,18 @@ public class PMD_Action_Listener implements ActionListener {
         PMDPath = executable.getAbsolutePath();
 
     }
+
+
     public void actionPerformed(ActionEvent event){
         PMD_Runner runner;
         if(useDefault == false){
-            getPMDPath();
             runner = PMD_Runner_Factory.getPMDRunner(PMDPath);
 
         }
-        else
-            runner = PMD_Runner_Factory.getPMDRunner();
+        else{
+            getDefaultPMDPath();
+            runner = PMD_Runner_Factory.getPMDRunner(PMDPath);
+        }
 
         StringBuilder msg = new StringBuilder("Any problems found are displayed below:");
         msg.append(LINE_SEPARATOR);
@@ -132,6 +138,35 @@ public class PMD_Action_Listener implements ActionListener {
 
         JOptionPane.showMessageDialog(null, msg);
     }
+    
+    /**
+     * Requires user to unpack PMD binaries into BlueJ/lib folder
+     */
+    public void getDefaultPMDPath(){
+        File bluejlib = new File("lib");
+        FilenameFilter filter = new FilenameFilter(){
+            public boolean accept(File dir, String name){
+                return name.startsWith("pmd-bin");
+            }
+        };
+        String [] children = bluejlib.list(filter);
+        if(children.length != 1){
+            String msg = "Please ensure that pmd-bin-* is installed only once in BlueJ lib folder";
+            PMDPath = null;
+            JOptionPane.showMessageDialog(null, msg);
+        }
+        else{
+            File executable = new File(bluejlib, children[0]);
+            if (isWindows()) {
+                executable = new File(executable, "bin/pmd.bat");
+            } else {
+                executable = new File(executable, "bin/run.sh");
+            }
+            PMDPath = executable.getAbsolutePath();
+        }
+    }
+
+    
 
     private boolean isWindows(){
         return (OS.indexOf("win") >= 0);
