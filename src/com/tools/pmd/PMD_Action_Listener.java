@@ -21,6 +21,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import java.util.LinkedList;
+
 import java.net.URL;
 import java.net.URLClassLoader;
 /**
@@ -114,6 +116,9 @@ public class PMD_Action_Listener implements ActionListener {
         msg.append(LINE_SEPARATOR);
         for(int i = 0; i < filenames.length; i++){
             String output = runner.runText(filePaths[i]);
+            LinkedList<PMD_Report_Line> pmdrl = new LinkedList<>();
+            for(String line : output.split("\n"))
+                 pmdrl.add(new PMD_Report_Line(line));
             msg.append(output);
             msg.append(LINE_SEPARATOR);
         }
@@ -133,7 +138,7 @@ public class PMD_Action_Listener implements ActionListener {
         };
         String [] children = bluejlib.list(filter);
         if(children.length != 1){
-            String msg = "Please ensure that pmd-bin-* is installed only once in BlueJ lib folder";
+            String msg = "Please ensure that pmd-bin-* is installed once and only once in BlueJ lib folder";
             PMDPath = null;
             JOptionPane.showMessageDialog(null, msg);
         }

@@ -46,7 +46,7 @@ public class PMD_Custom_Runner implements PMD_Runner{
      * @return   comma delimited PMD command
      */
     String makeCommand(String filepath, String outputFormat){
-        return pathToPMD + ",-format," + outputFormat + ",-R,java-quickstart,-version,1.8,-language,java,-d," + filepath;
+        return pathToPMD + ",-format," + outputFormat + ",-R,java-quickstart,-version,1.8,-shortnames,-language,java,-d," + filepath;
     }
     
     // Pulls in and runs the command.
