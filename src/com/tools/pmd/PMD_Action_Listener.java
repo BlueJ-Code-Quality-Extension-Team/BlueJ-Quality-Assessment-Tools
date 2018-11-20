@@ -39,22 +39,7 @@ public class PMD_Action_Listener implements ActionListener {
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static String OS = System.getProperty("os.name").toLowerCase();
 
-
-    public PMD_Action_Listener(){
-
-    }
     public PMD_Action_Listener(BPackage aPackage){
-        String currentDir = System.getProperty("user.dir");
-        System.out.println("Current dir using System:" +currentDir);
-        System.out.println("Current Lib:");
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-        URL[] urls = ((URLClassLoader)cl).getURLs();
-
-        for(URL url: urls){
-            System.out.println(url.getFile());
-        }
-
         try{
             this.bProject = aPackage.getProject();
             projectDir=bProject.getDir().toString();
@@ -105,18 +90,6 @@ public class PMD_Action_Listener implements ActionListener {
         return classes;
     }
     
-    public void getPMDPath(){
-        File executable = new File(projectDir, "pmd-bin-6.9.0");
-        if (isWindows()) {
-            executable = new File(executable, "bin/pmd.bat");
-        } else {
-            executable = new File(executable, "bin/run.sh");
-        }
-        PMDPath = executable.getAbsolutePath();
-
-    }
-
-
     public void actionPerformed(ActionEvent event){
         PMD_Runner runner;
         if(useDefault == false){
