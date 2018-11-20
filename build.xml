@@ -18,6 +18,15 @@
 
   <property name="pmd-lib" value = "./lib/pmd"/>
   <property name="PMD.jar" value="${pmd-lib}/pmd-core-6.7.0.jar"/>
+  <property name="jcommander.jar" value="${pmd-lib}/jcommander-1.48.jar"/>
+  <property name="asm.jar" value="${pmd-lib}/asm-6.2.jar"/>
+  <property name="commons-io.jar" value="${pmd-lib}/commons-io-2.4.jar"/>
+  <property name="commons-lang.jar" value="${pmd-lib}/commons-lang3-3.7.jar"/>
+  <property name="gson.jar" value="${pmd-lib}/gson-2.5.jar"/>
+  <property name="pmd-java.jar" value="${pmd-lib}/pmd-java-6.7.0.jar"/>
+  <property name="saxon.jar" value="${pmd-lib}/saxon-9.1.0.8.jar"/>
+  <property name="saxondom.jar" value="${pmd-lib}/saxon-9.1.0.8-dom.jar"/>
+
   <!-- add classes to generate Javadoc -->
   <path id="javadoc.classpath">
     <pathelement location="${ant.home}/lib/crimson.jar" />
@@ -28,7 +37,7 @@
   <path id="build.classpath">
     <pathelement location="${bluejext.jar}" />
     <pathelement location="${checkstyle-all.jar}" />
-    <fileset dir="${pmd-lib}" includes="**/*.jar"/>
+    <pathelement location="${PMD.jar}"/>
   </path>
 
   <path id="run.classpath">
@@ -128,8 +137,15 @@
       <zipfileset src="${checkstyle-all.jar}">
         <exclude name="META-INF/"/>
       </zipfileset>
-      <zipfileset dir="${pmd-lib}"/>
-
+      <zipfileset src="${PMD.jar}" excludes="META-INF/"/>         
+      <zipfileset src="${asm.jar}" excludes="META-INF/"/>         
+      <zipfileset src="${commons-io.jar}" excludes="META-INF/"/>  
+      <zipfileset src="${commons-lang.jar}" excludes="META-INF/"/>
+      <zipfileset src="${gson.jar}" excludes="META-INF/"/>        
+      <zipfileset src="${pmd-java.jar}" excludes="META-INF/"/>    
+      <zipfileset src="${saxon.jar}" excludes="META-INF/"/>       
+      <zipfileset src="${saxondom.jar}" excludes="META-INF/"/>    
+      <zipfileset src="${jcommander.jar}" excludes="META-INF/"/>
     </jar>
     <copy todir=".">
       <fileset dir="${dist.extensions.dir}">
