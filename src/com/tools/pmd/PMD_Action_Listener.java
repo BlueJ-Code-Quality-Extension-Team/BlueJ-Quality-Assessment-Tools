@@ -20,6 +20,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+
+import java.net.URL;
+import java.net.URLClassLoader;
 /**
  * 
  */
@@ -38,6 +41,17 @@ public class PMD_Action_Listener implements ActionListener {
 
 
     public PMD_Action_Listener(BPackage aPackage){
+        String currentDir = System.getProperty("user.dir");
+        System.out.println("Current dir using System:" +currentDir);
+        System.out.println("Current Lib:");
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+
+        URL[] urls = ((URLClassLoader)cl).getURLs();
+
+        for(URL url: urls){
+            System.out.println(url.getFile());
+        }
+
         try{
             this.bProject = aPackage.getProject();
             projectDir=bProject.getDir().toString();

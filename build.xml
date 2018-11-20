@@ -17,6 +17,7 @@
   <property name="dist.docs.dir" value="${dist.dir}/${extension}/docs/extensions/checkstyle"/>
 
   <property name="pmd-lib" value = "./lib/pmd"/>
+
   <property name="PMD.jar" value="${pmd-lib}/pmd-core-6.7.0.jar"/>
   <property name="jcommander.jar" value="${pmd-lib}/jcommander-1.48.jar"/>
   <property name="asm.jar" value="${pmd-lib}/asm-6.2.jar"/>
@@ -38,6 +39,7 @@
     <pathelement location="${bluejext.jar}" />
     <pathelement location="${checkstyle-all.jar}" />
     <pathelement location="${PMD.jar}"/>
+    <pathelement location="${pmd-java.jar}"/>
   </path>
 
   <path id="run.classpath">
@@ -137,14 +139,15 @@
       <zipfileset src="${checkstyle-all.jar}">
         <exclude name="META-INF/"/>
       </zipfileset>
-      <zipfileset src="${PMD.jar}" excludes="META-INF/"/>         
-      <zipfileset src="${asm.jar}" excludes="META-INF/"/>         
-      <zipfileset src="${commons-io.jar}" excludes="META-INF/"/>  
+      <fileset dir="${pmd-lib}" includes="pmd-*"/>
+      <zipfileset src="${PMD.jar}" excludes="META-INF/"/>
+      <zipfileset src="${asm.jar}" excludes="META-INF/"/>
+      <zipfileset src="${commons-io.jar}" excludes="META-INF/"/>
       <zipfileset src="${commons-lang.jar}" excludes="META-INF/"/>
-      <zipfileset src="${gson.jar}" excludes="META-INF/"/>        
-      <zipfileset src="${pmd-java.jar}" excludes="META-INF/"/>    
-      <zipfileset src="${saxon.jar}" excludes="META-INF/"/>       
-      <zipfileset src="${saxondom.jar}" excludes="META-INF/"/>    
+      <zipfileset src="${gson.jar}" excludes="META-INF/"/>
+      <zipfileset src="${pmd-java.jar}" excludes="META-INF/"/>
+      <zipfileset src="${saxon.jar}" excludes="META-INF/"/>
+      <zipfileset src="${saxondom.jar}" excludes="META-INF/"/>
       <zipfileset src="${jcommander.jar}" excludes="META-INF/"/>
     </jar>
     <copy todir=".">
