@@ -24,7 +24,7 @@ import javax.swing.JOptionPane;
 import java.net.URL;
 import java.net.URLClassLoader;
 /**
- * 
+ * Interface between bluejextension and PMD_Runners
  */
 //TODO: Implement Properties and fix file path for command
 public class PMD_Action_Listener implements ActionListener {
@@ -37,7 +37,7 @@ public class PMD_Action_Listener implements ActionListener {
     String [] filenames;
     String [] filePaths;
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-    private static String OS = System.getProperty("os.name").toLowerCase();
+    private static final String OS = System.getProperty("os.name").toLowerCase();
 
     public PMD_Action_Listener(BPackage aPackage){
         try{
@@ -50,7 +50,30 @@ public class PMD_Action_Listener implements ActionListener {
 
         BClass [] classes;
         classes = addClasses(aPackage);
+        setClassesProperties(classes);
+    }
 
+    public void updateClasses(BPackage aPackage){
+        setClassesProperties(addClasses(aPackage));
+    }
+
+
+    private BClass [] addClasses(BPackage aPackage){
+        BClass [] classes;
+        try{
+            classes = aPackage.getClasses();
+        }catch(ProjectNotOpenException e){
+            classes = null;
+            e.printStackTrace();
+        }catch(PackageNotFoundException e){
+            classes = null;
+            e.printStackTrace();
+        }
+
+        return classes;
+    }
+
+    private void setClassesProperties(BClass [] classes){
         if(classes != null){
             filenames = new String[classes.length];
             filePaths = new String[classes.length];
@@ -74,32 +97,18 @@ public class PMD_Action_Listener implements ActionListener {
         }
     }
 
-
-    public BClass [] addClasses(BPackage aPackage){
-        BClass [] classes;
-        try{
-            classes = aPackage.getClasses();
-        }catch(ProjectNotOpenException e){
-            classes = null;
-            e.printStackTrace();
-        }catch(PackageNotFoundException e){
-            classes = null;
-            e.printStackTrace();
-        }
-
-        return classes;
-    }
-    
     public void actionPerformed(ActionEvent event){
-        PMD_Runner runner;
-        if(useDefault == false){
-            runner = PMD_Runner_Factory.getPMDRunner(PMDPath);
+        getDefaultPMDPath();
 
+        if(PMDPath == null){
+            String warning = "Error: Please ensure that PMD is installed correctly";
+            JOptionPane.showMessageDialog(null,warning);
+            return;
         }
-        else{
-            getDefaultPMDPath();
-            runner = PMD_Runner_Factory.getPMDRunner(PMDPath);
-        }
+
+        PMD_Runner runner;
+
+        runner = PMD_Runner_Factory.getPMDRunner(PMDPath);
 
         StringBuilder msg = new StringBuilder("Any problems found are displayed below:");
         msg.append(LINE_SEPARATOR);
@@ -111,7 +120,7 @@ public class PMD_Action_Listener implements ActionListener {
 
         JOptionPane.showMessageDialog(null, msg);
     }
-    
+
     /**
      * Requires user to unpack PMD binaries into BlueJ/lib folder
      */
@@ -139,7 +148,6 @@ public class PMD_Action_Listener implements ActionListener {
         }
     }
 
-    
 
     private boolean isWindows(){
         return (OS.indexOf("win") >= 0);
