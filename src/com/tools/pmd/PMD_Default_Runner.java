@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.nio.Buffer;
 
 public class PMD_Default_Runner implements PMD_Runner{
-    final private String ruleSets = "category/java/errorprone.xml,category/java/design.xml,category/java/bestpractices.xml" +
+    final private String ruleSets = "category/java/design.xml,category/java/bestpractices.xml" +
                                     ",category/java/documentation.xml,category/java/performance.xml,category/java/multithreading.xml";
     private String javaVersionNumber;
-    private String prefix = "pmd-default-runner-test";
+    private String prefix = "pmd-default-runner";
     private String suffix = ".tmp";
     public String run(File file, String format){
         final String lineSeparator = System.getProperty("line.separator");

@@ -8,7 +8,6 @@
 
   <property name="bluejext.jar" value="lib/bluejext.jar" />
   <property name="checkstyle-all.jar" value="lib/checkstyle-all.jar" />
-  <property name="PMD.jar" value="lib/pmd-core-6.7.0.jar"/>
   <property name="dist.dir" value="target/dist" />
 
   <property name="extension-version" value="0.0.1" />
@@ -16,36 +15,37 @@
 
   <property name="dist.extensions.dir" value="${dist.dir}/${extension}/lib/extensions"/>
   <property name="dist.docs.dir" value="${dist.dir}/${extension}/docs/extensions/checkstyle"/>
-  <property name="jcommander.jar" value= "lib/jcommander-1.48.jar"/>
-  <property name="commons-lang.jar" value = "lib/commons-lang3-3.7.jar"/>
 
+  <property name="pmd-lib" value = "./lib/pmd"/>
+  <property name="PMD.jar" value="${pmd-lib}/pmd-core-6.7.0.jar"/>
   <!-- add classes to generate Javadoc -->
   <path id="javadoc.classpath">
     <pathelement location="${ant.home}/lib/crimson.jar" />
     <path refid="run.classpath" />
   </path>
 
+
   <path id="build.classpath">
     <pathelement location="${bluejext.jar}" />
     <pathelement location="${checkstyle-all.jar}" />
-    <pathelement location="${ant.home}/lib/ant.jar" />
-    <pathelement location="${PMD.jar}"/>
+    <fileset dir="${pmd-lib}" includes="**/*.jar"/>
   </path>
 
   <path id="run.classpath">
     <pathelement location="target" />
     <path refid="build.classpath" />
   </path>
-  
+
   <path id="lib.classpath">
     <pathelement location="lib/junit.jar" />
     <pathelement location="lib/hamcrest-core.jar" />
   </path>
-  
+
+
   <!-- Ensure all targets are run -->
   <target name="all" depends="clean, compile.all, test, build.extension,
-  build.bindist, build.srcdist, javadoc" />
-  
+    build.bindist, build.srcdist, javadoc" />
+
   <target name="display.classpath" description="Displays the run classpath">
     <property name="asd" refid="run.classpath" />
     <echo message="Classpath is ${asd}" />
@@ -65,9 +65,9 @@
   <target name="compile.all" description="Compiles the source code" depends="">
     <mkdir dir="target" />
     <javac srcdir="src/com"
-           destdir="target"
-           classpathref="build.classpath"
-           deprecation="on" debug="on" includeantruntime="false">
+      destdir="target"
+      classpathref="build.classpath"
+      deprecation="on" debug="on" includeantruntime="false">
       <compilerarg value="-Xlint:unchecked"/>
     </javac>
   </target>
@@ -92,7 +92,7 @@
       <compilerarg value="-Xlint:unchecked"/>
     </javac>
   </target> -->
-  
+
   <!-- -->
   <!-- TEST TARGETS -->
   <!-- -->
@@ -119,24 +119,17 @@
     <mkdir dir="${dist.dir}" />
     <mkdir dir="${dist.extensions.dir}" />
     <jar jarfile="${dist.extensions.dir}/${extension}.jar"
-         manifest="config/manifest.mf"
-         update="false">
+      manifest="config/manifest.mf"
+      update="false">
       <fileset dir="target"/>
       <fileset dir="docs">
         <include name="*.xml"/>
       </fileset>
       <zipfileset src="${checkstyle-all.jar}">
-	<exclude name="META-INF/"/>
+        <exclude name="META-INF/"/>
       </zipfileset>
-      <zipfileset src="${PMD.jar}">
-	<exclude name="META-INF/"/>
-      </zipfileset>
-       <zipfileset src="${jcommander.jar}">
-	<exclude name="META-INF/"/>
-      </zipfileset>
-      <zipfileset src="${commons-lang.jar}">
-	<exclude name="META-INF/"/>
-      </zipfileset>
+      <zipfileset dir="${pmd-lib}"/>
+
     </jar>
     <copy todir=".">
       <fileset dir="${dist.extensions.dir}">
@@ -146,7 +139,7 @@
   </target>
 
   <target name="build.bindist" depends="build.extension,javadoc"
-          description="Builds the compressed distribution files">
+    description="Builds the compressed distribution files">
     <delete dir="${dist.extensions.dir}/checkstyle" />
     <mkdir dir="${dist.extensions.dir}/checkstyle" />
     <mkdir dir="${dist.docs.dir}" />
@@ -154,7 +147,7 @@
     <!-- copy stuff without filtering -->
     <copy todir="${dist.docs.dir}">
       <fileset dir =".">
-      	<include name="LICENSE*"/>
+        <include name="LICENSE*"/>
         <include name="README"/>
         <include name="RIGHTS.antlr"/>
         <include name="contrib/**"/>
@@ -184,13 +177,13 @@
       </fileset>
     </zip>
     <tar tarfile="${dist.dir}/checkstyle-extension-${extension-version}.tar" longfile="gnu"
-         basedir="${dist.dir}/${extension}" includes="**" />
+      basedir="${dist.dir}/${extension}" includes="**" />
     <gzip zipfile="${dist.dir}/checkstyle-extension-${extension-version}.tar.gz"
-          src="${dist.dir}/checkstyle-extension-${extension-version}.tar" />
+      src="${dist.dir}/checkstyle-extension-${extension-version}.tar" />
   </target>
 
   <target name="build.srcdist"
-          description="Builds the compressed source files for distribution">
+    description="Builds the compressed source files for distribution">
     <delete dir="${dist.dir}/checkstyle-extension-src-${extension-version}" />
     <mkdir dir="${dist.dir}/checkstyle-extension-src-${extension-version}" />
     <copy todir="${dist.dir}/checkstyle-extension-src-${extension-version}">
@@ -214,20 +207,20 @@
       </fileset>
     </zip>
     <tar tarfile="${dist.dir}/checkstyle-extension-src-${extension-version}.tar" longfile="gnu"
-         basedir="${dist.dir}" includes="checkstyle-extension-src-${extension-version}/**" />
+      basedir="${dist.dir}" includes="checkstyle-extension-src-${extension-version}/**" />
     <gzip zipfile="${dist.dir}/checkstyle-extension-src-${extension-version}.tar.gz"
-          src="${dist.dir}/checkstyle-extension-src-${extension-version}.tar" />
+      src="${dist.dir}/checkstyle-extension-src-${extension-version}.tar" />
   </target>
 
   <target name="javadoc" depends="compile.all"
-          description="Creates the javadoc html files">
+    description="Creates the javadoc html files">
     <mkdir dir="docs/api" />
     <javadoc sourcepath="src/checkstyle" destdir="docs/api"
-             packagenames="com.puppycrawl.tools.checkstyle.*"
-             Windowtitle="Checkstyle Extension API"
-             classpathref="javadoc.classpath"
-             Use="true"
-             Footer="&lt;a target=&quot;_top&quot; href=&quot;./{@docRoot}/../index.html&quot;&gt;Back to the Checkstyle Extension Home Page&lt;/a&gt;">
+      packagenames="com.puppycrawl.tools.checkstyle.*"
+      Windowtitle="Checkstyle Extension API"
+      classpathref="javadoc.classpath"
+      Use="true"
+      Footer="&lt;a target=&quot;_top&quot; href=&quot;./{@docRoot}/../index.html&quot;&gt;Back to the Checkstyle Extension Home Page&lt;/a&gt;">
       <link href="https://docs.oracle.com/javase/8/docs/api/"/>
       <link href="http://checkstyle.sourceforge.net/apidocs/"/>
     </javadoc>
