@@ -24,6 +24,8 @@ import javax.swing.JPanel;
 
 import bluej.extensions.PreferenceGenerator;
 
+import java.awt.*;
+
 
 /**
  * Manages Checkstyle extension panel in BlueJ preferences.
@@ -33,7 +35,7 @@ import bluej.extensions.PreferenceGenerator;
 public class Preferences implements PreferenceGenerator
 {
     private com.tools.checkstyle.Preferences mCheckstylePref;
-
+    private com.tools.pmd.PMD_Preference_Panel mPMDPref;
 
     /**
      * Creates a <code>Preferences</code> object that manages
@@ -44,23 +46,30 @@ public class Preferences implements PreferenceGenerator
     public Preferences()
     {
         mCheckstylePref = new com.tools.checkstyle.Preferences();
+        mPMDPref = new com.tools.pmd.PMD_Preference_Panel();
     }
 
     /** @see bluej.extensions.PreferenceGenerator#saveValues() */
     public void saveValues()
     {
         mCheckstylePref.saveValues();
+        mPMDPref.saveValues();
     }
 
     /** @see bluej.extensions.PreferenceGenerator#loadValues() */
     public void loadValues()
     {
         mCheckstylePref.loadValues();
+        mPMDPref.loadValues();
     }
 
     /** @see bluej.extensions.PreferenceGenerator#getPanel() */
     public JPanel getPanel()
     {
-        return mCheckstylePref.getPanel();
+        JPanel prefPanel = new JPanel(new GridLayout(2,1));
+        prefPanel.add(mCheckstylePref.getPanel());
+        prefPanel.add(mPMDPref.getPanel());
+
+        return prefPanel;
     }
 }

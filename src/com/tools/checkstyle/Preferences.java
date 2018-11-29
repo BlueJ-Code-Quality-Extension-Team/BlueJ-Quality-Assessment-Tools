@@ -139,25 +139,34 @@ public class Preferences implements PreferenceGenerator
     public void saveValues()
     {
         // save the preference values in the BlueJ properties file
-        final BlueJManager manager = BlueJManager.getInstance();
         final String afterConfigFileName = mConfigFileTextField.getText();
         Settings.saveConfigFileName(afterConfigFileName);
         final String afterPropsFileName = mPropsFileTextField.getText();
         Settings.savePropsFileName(afterPropsFileName);
 
-        // changes?
-        if (!(mBeforeConfigFileName.equals(afterConfigFileName))
-            || !(mBeforePropsFileName.equals(afterPropsFileName)))
+        if (changeWasMade(mBeforeConfigFileName, afterConfigFileName)
+                || changeWasMade(mBeforePropsFileName, afterPropsFileName))
         {
             QualityAssessmentExtension.getInstance().mCheckstyleUI.refreshView();
         }
     }
 
+    private boolean changeWasMade(String before, String after){
+        boolean didChange = false;
+
+        if (before == null && after == null){
+            didChange = false;
+        }
+        else if (before != null && !before.equals(after)){
+            didChange = true;
+        }
+
+        return didChange;
+    }
+
     /** @see bluej.extensions.PreferenceGenerator#loadValues() */
     public void loadValues()
     {
-        final BlueJManager manager = BlueJManager.getInstance();
-
         mBeforeConfigFileName = Settings.getConfigFileName();
         mBeforePropsFileName = Settings.getPropsFileName();
         mConfigFileTextField.setText(mBeforeConfigFileName);

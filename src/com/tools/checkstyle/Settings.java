@@ -6,10 +6,10 @@ import java.io.InputStream;
 
 public class Settings {
     /** configuration file name key */
-    private static final String CONFIG_FILE_NAME_KEY = "configfile";
+    private static final String CONFIG_FILE_NAME_KEY = "checkstyle.configfile";
 
     /** properties file name key */
-    private static final String PROPS_FILE_NAME_KEY = "propsfile";
+    private static final String PROPS_FILE_NAME_KEY = "checkstyle.propsfile";
 
     /** default configuration file */
     private static final String DEFAULT_CHECKS_FILE = "default_checks.xml";

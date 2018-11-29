@@ -44,9 +44,6 @@ public final class BlueJManager
     /** singleton */
     private static BlueJManager sInstance = null;
 
-    /** Base name for extension properties */
-    private static final String EXT_BASE = "qualityToolsExtension";
-
     /** BlueJ application proxy */
     private BlueJ mBlueJ = null;
 
@@ -370,7 +367,7 @@ public final class BlueJManager
      * @return The fetched property or default
      */
     public String getExtensionPropertyString(String propertyName, String def){
-        String prop = EXT_BASE + "." + propertyName;
+        String prop = propertyName;
         return mBlueJ.getExtensionPropertyString(prop, def);
     }
 
@@ -380,7 +377,7 @@ public final class BlueJManager
      * @param value The value of the property
      */
     public void setExtensionPropertyString(String propertyName, String value){
-        String prop = EXT_BASE + "." + propertyName;
+        String prop = propertyName;
         mBlueJ.setExtensionPropertyString(prop, value);
     }
 

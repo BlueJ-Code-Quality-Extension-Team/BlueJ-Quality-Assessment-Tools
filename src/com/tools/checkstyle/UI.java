@@ -34,13 +34,13 @@ public class UI {
     private static final int AUDIT_CHECK_INTERVAL = 2000;
 
     /** audit window dimensions */
-    private static final String FRAME_DIMENSIONS_KEY = "framedimensions";
+    private static final String FRAME_DIMENSIONS_KEY = "checkstyle.framedimensions";
 
     /** offset of corner relative to current frame */
     private static final int FRAME_OFFSET = 20;
 
     /** determine whether checkstyle audit window is open */
-    private static final String IS_OPEN_KEY = "frameisopen";
+    private static final String IS_OPEN_KEY = "checkstyle.frameisopen";
 
     /** Private constructor for singleton. */
     private UI(){
