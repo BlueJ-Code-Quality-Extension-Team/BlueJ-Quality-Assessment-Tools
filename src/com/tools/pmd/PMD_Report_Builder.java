@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 
 import java.nio.file.*;
 
+/** Singleton class to provide all report building */
 public class PMD_Report_Builder {
 
     /** singleton */
@@ -29,7 +30,8 @@ public class PMD_Report_Builder {
     private PMD_Report_Builder(){
 
     }
-
+    
+    /** returns singleton instance */
     public static PMD_Report_Builder getInstance(){
         if(PMDReportBuilder == null){
             PMDReportBuilder = new PMD_Report_Builder();
@@ -38,7 +40,11 @@ public class PMD_Report_Builder {
         return PMDReportBuilder;
     }
 
-    public PMD_Report generatePMDReport(Set<File> files){
+    /**
+     * Takes a set of files and generates a PMD_Report from them 
+     * @param files Set of files to be evaluated 
+    */
+    public synchronized PMD_Report generatePMDReport(Set<File> files){
         PMD_Report report = new PMD_Report();
         BlueJPropertiesAdapter mnger = (BlueJPropertiesAdapter) BlueJManager.getInstance().getPropertiesAdapter();
         boolean defalt = Boolean.parseBoolean(mnger.getProperty("PMD.default"));
@@ -47,8 +53,10 @@ public class PMD_Report_Builder {
         else{
             PMDPath = mnger.getProperty("PMD.Path");
             String check = mnger.getProperty("PMD.Check");
-            if(check != "" && check!= null)
+            if(check != "" && check!= null && check.toLowerCase().endsWith("xml"))
                 checks = check;
+            else
+                checks = "java-quickstart";
         }
 
         if(PMDPath == null){
@@ -86,7 +94,7 @@ public class PMD_Report_Builder {
         };
         String [] children = bluejlib.list(filter);
         if(children.length != 1){
-            String msg = "Please ensure that pmd-bin-* is installed only once in BlueJ lib folder";
+            String msg = "Please ensure that pmd-bin-* is installed once and only once in BlueJ lib folder";
             PMDPath = null;
             JOptionPane.showMessageDialog(null, msg);
         }

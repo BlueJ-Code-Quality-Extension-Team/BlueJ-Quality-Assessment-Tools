@@ -56,7 +56,6 @@ public class PMD_Runner{
     // Pulls in and runs the command.
     private String run(String filepath, String outputFormat){
         String myCommand = makeCommand(filepath, outputFormat);
-        System.out.println("Command is: " + myCommand);
         ProcessBuilder pb = new ProcessBuilder(myCommand.split(","));
         pb.redirectErrorStream(false);
         final StringBuilder output = new StringBuilder();
