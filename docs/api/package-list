@@ -1,2 +1,4 @@
-com.puppycrawl.tools.checkstyle.checks
-com.puppycrawl.tools.checkstyle.plugins.bluej
+com.bluejmanager
+com.tools.checkstyle
+com.tools.checkstyle.checks
+com.tools.pmd

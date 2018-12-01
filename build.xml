@@ -1,46 +1,28 @@
 <project name="bluejcheckstyle" default="all" basedir=".">
 
+  <property name="extension-version" value="0.0.1" />
+  <property name="extensionName" value="quality-tools-extension-${extension-version}" />
 
   <property name="bluejext.jar" value="lib/bluejext.jar" />
   <property name="checkstyle-all.jar" value="lib/checkstyle-all.jar" />
+
   <property name="dist.dir" value="target/dist" />
-
-  <property name="extension-version" value="0.0.1" />
-  <property name="extension" value="quality-tools-extension-${extension-version}" />
-
-  <property name="dist.extensions.dir" value="${dist.dir}/${extension}/lib/extensions"/>
-  <property name="dist.docs.dir" value="${dist.dir}/${extension}/docs/extensions/checkstyle"/>
-
-  <property name="pmd-lib" value = "./lib/pmd"/>
-
-  <property name="PMD.jar" value="${pmd-lib}/pmd-core-6.7.0.jar"/>
-  <property name="jcommander.jar" value="${pmd-lib}/jcommander-1.48.jar"/>
-  <property name="asm.jar" value="${pmd-lib}/asm-6.2.jar"/>
-  <property name="commons-io.jar" value="${pmd-lib}/commons-io-2.4.jar"/>
-  <property name="commons-lang.jar" value="${pmd-lib}/commons-lang3-3.7.jar"/>
-  <property name="gson.jar" value="${pmd-lib}/gson-2.5.jar"/>
-  <property name="pmd-java.jar" value="${pmd-lib}/pmd-java-6.7.0.jar"/>
-  <property name="saxon.jar" value="${pmd-lib}/saxon-9.1.0.8.jar"/>
-  <property name="saxondom.jar" value="${pmd-lib}/saxon-9.1.0.8-dom.jar"/>
-  <property name="javacc.jar" value="${pmd-lib}/javacc-5.0.jar"/>
-
-  <!-- add classes to generate Javadoc -->
-  <path id="javadoc.classpath">
-    <pathelement location="${ant.home}/lib/crimson.jar" />
-    <path refid="run.classpath" />
-  </path>
-
+  <property name="dist.extensions.dir" value="${dist.dir}/${extensionName}/lib/extensions"/>
+  <property name="dist.docs.dir" value="${dist.dir}/${extensionName}/docs/extensions/checkstyle"/>
 
   <path id="build.classpath">
     <pathelement location="${bluejext.jar}" />
     <pathelement location="${checkstyle-all.jar}" />
-    <pathelement location="${PMD.jar}"/>
-    <pathelement location="${pmd-java.jar}"/>
   </path>
 
   <path id="run.classpath">
     <pathelement location="target" />
     <path refid="build.classpath" />
+  </path>
+
+  <path id="javadoc.classpath">
+    <pathelement location="lib" />
+    <path refid="run.classpath" />
   </path>
 
   <path id="lib.classpath">
@@ -53,17 +35,13 @@
   <target name="all" depends="clean, compile.all, test, build.extension,
     build.bindist, build.srcdist, javadoc" />
 
-  <target name="display.classpath" description="Displays the run classpath">
-    <property name="asd" refid="run.classpath" />
-    <echo message="Classpath is ${asd}" />
-  </target>
-
   <!-- -->
   <!-- Cleanup targets -->
   <!-- -->
   <target name="clean" description="Cleans any directories and generated files">
     <delete dir="target" />
     <delete dir="docs/reports" />
+    <delete file="${extensionName}.jar" />
   </target>
 
   <!-- -->
@@ -78,27 +56,6 @@
       <compilerarg value="-Xlint:unchecked"/>
     </javac>
   </target>
-
-  <!-- <target name="compile.checkstyle"
-          description="Compiles the source code">
-    <mkdir dir="target" />
-    <javac srcdir="src/com/tools/checkstyle"
-           destdir="target"
-           classpathref="build.classpath"
-           deprecation="on" debug="on" includeantruntime="false">
-      <compilerarg value="-Xlint:unchecked"/>
-    </javac>
-  </target>
-
-  <target name="compile.com.tools.pmd" description="Compiles the source code">
-    <mkdir dir="target" />
-    <javac srcdir="src/com/tools/pmd"
-           destdir="target"
-           classpathref="build.classpath"
-           deprecation="on" debug="on" includeantruntime="false">
-      <compilerarg value="-Xlint:unchecked"/>
-    </javac>
-  </target> -->
 
   <!-- -->
   <!-- TEST TARGETS -->
@@ -125,7 +82,7 @@
   <target name="build.extension" depends="clean, compile.all" description="Builds the extension jar file">
     <mkdir dir="${dist.dir}" />
     <mkdir dir="${dist.extensions.dir}" />
-    <jar jarfile="${dist.extensions.dir}/${extension}.jar"
+    <jar jarfile="${dist.extensions.dir}/${extensionName}.jar"
       manifest="config/manifest.mf"
       update="false">
       <fileset dir="target"/>
@@ -135,27 +92,17 @@
       <zipfileset src="${checkstyle-all.jar}">
         <exclude name="META-INF/"/>
       </zipfileset>
-      <fileset dir="${pmd-lib}" includes="pmd-*"/>
-      <zipfileset src="${PMD.jar}" excludes="META-INF/"/>
-      <zipfileset src="${asm.jar}" excludes="META-INF/"/>
-      <zipfileset src="${commons-io.jar}" excludes="META-INF/"/>
-      <zipfileset src="${commons-lang.jar}" excludes="META-INF/"/>
-      <zipfileset src="${gson.jar}" excludes="META-INF/"/>
-      <zipfileset src="${pmd-java.jar}" excludes="META-INF/"/>
-      <zipfileset src="${saxon.jar}" excludes="META-INF/"/>
-      <zipfileset src="${saxondom.jar}" excludes="META-INF/"/>
-      <zipfileset src="${javacc.jar}" excludes="META-INF/" />
-      <zipfileset src="${jcommander.jar}" excludes="META-INF/"/>
     </jar>
     <copy todir=".">
       <fileset dir="${dist.extensions.dir}">
-        <include name="${extension}.jar"/>
+        <include name="${extensionName}.jar"/>
       </fileset>
     </copy>
   </target>
 
-  <target name="build.bindist" depends="build.extension,javadoc"
-    description="Builds the compressed distribution files">
+  <target name="build.bindist" depends="build.extension, javadoc"
+      description="Builds the compressed distribution files">
+
     <delete dir="${dist.extensions.dir}/checkstyle" />
     <mkdir dir="${dist.extensions.dir}/checkstyle" />
     <mkdir dir="${dist.docs.dir}" />
@@ -188,12 +135,12 @@
     </copy>
     <!-- create the final zip & tar/gzip files -->
     <zip zipfile="${dist.dir}/checkstyle-extension-${extension-version}.zip">
-      <fileset dir="${dist.dir}/${extension}">
+      <fileset dir="${dist.dir}/${extensionName}">
         <include name="**"/>
       </fileset>
     </zip>
     <tar tarfile="${dist.dir}/checkstyle-extension-${extension-version}.tar" longfile="gnu"
-      basedir="${dist.dir}/${extension}" includes="**" />
+      basedir="${dist.dir}/${extensionName}" includes="**" />
     <gzip zipfile="${dist.dir}/checkstyle-extension-${extension-version}.tar.gz"
       src="${dist.dir}/checkstyle-extension-${extension-version}.tar" />
   </target>
@@ -228,15 +175,17 @@
       src="${dist.dir}/checkstyle-extension-src-${extension-version}.tar" />
   </target>
 
-  <target name="javadoc" depends="compile.all"
-    description="Creates the javadoc html files">
+  <target name="javadoc" depends="compile.all" description="Creates the javadoc html files">
     <mkdir dir="docs/api" />
-    <javadoc sourcepath="src/checkstyle" destdir="docs/api"
-      packagenames="com.puppycrawl.tools.checkstyle.*"
-      Windowtitle="Checkstyle Extension API"
+    <javadoc 
+      access="private"
+      destdir="docs/api"
+      Windowtitle="Code Quality Extension API"
       classpathref="javadoc.classpath"
-      Use="true"
-      Footer="&lt;a target=&quot;_top&quot; href=&quot;./{@docRoot}/../index.html&quot;&gt;Back to the Checkstyle Extension Home Page&lt;/a&gt;">
+      Use="true">
+      <fileset dir="src" casesensitive="yes" defaultexcludes="yes">
+        <filename name="**/*.java"/>
+      </fileset>
       <link href="https://docs.oracle.com/javase/8/docs/api/"/>
       <link href="http://checkstyle.sourceforge.net/apidocs/"/>
     </javadoc>
