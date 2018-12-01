@@ -11,8 +11,17 @@ public class Settings {
     /** properties file name key */
     private static final String PROPS_FILE_NAME_KEY = "checkstyle.propsfile";
 
+    /** audit window dimensions */
+    protected static final String FRAME_DIMENSIONS_KEY = "checkstyle.framedimensions";
+
+    /** determine whether checkstyle audit window is open */
+    protected static final String IS_OPEN_KEY = "checkstyle.frameisopen";
+
     /** default configuration file */
     private static final String DEFAULT_CHECKS_FILE = "default_checks.xml";
+
+    /** offset of corner relative to current frame */
+    protected static final int FRAME_OFFSET = 20;
 
     /**
      * Retrieves the extension configuration file property value.

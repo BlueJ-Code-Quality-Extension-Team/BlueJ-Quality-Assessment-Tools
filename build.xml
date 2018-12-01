@@ -1,10 +1,5 @@
 <project name="bluejcheckstyle" default="all" basedir=".">
-  <!-- set global properties for this build -->
 
-  <!-- Give user a chance to override without editing this file -->
-  <!-- (and without typing -D each time it compiles it) -->
-  <property file="checkstyle.buildproperties" />
-  <property file="${user.home}/checkstyle.buildproperties" />
 
   <property name="bluejext.jar" value="lib/bluejext.jar" />
   <property name="checkstyle-all.jar" value="lib/checkstyle-all.jar" />

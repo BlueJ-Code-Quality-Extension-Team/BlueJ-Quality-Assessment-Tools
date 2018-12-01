@@ -32,7 +32,6 @@ import org.apache.commons.logging.LogFactory;
 
 import bluej.extensions.BlueJ;
 import bluej.extensions.Extension;
-import bluej.extensions.BPackage;
 
 import com.tools.checkstyle.*;
 import com.tools.pmd.*;
@@ -103,7 +102,6 @@ public class QualityAssessmentExtension extends Extension
             e.printStackTrace();
         }
     }
-
 
     /** @see bluej.extensions.Extension#startup(bluej.extensions.BlueJ) */
     public void startup(BlueJ aBlueJ)

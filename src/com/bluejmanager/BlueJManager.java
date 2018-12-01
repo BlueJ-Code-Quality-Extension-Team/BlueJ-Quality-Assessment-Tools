@@ -261,7 +261,6 @@ public final class BlueJManager
         return result;
     }
 
-
     /**
      * Pops up a warning message indicating that a named resource cannot
      * be found.
@@ -295,7 +294,6 @@ public final class BlueJManager
             mMissingResources.add(name);
         }
     }
-
 
     /**
      * Tries to resolve a resource name by checking for a file, searching

@@ -64,7 +64,7 @@ public class Preferences implements PreferenceGenerator
     private JButton mPropsFileButton;
 
     /** number of panel grid rows */
-    private static final int ROWS = 2 + 1;
+    private static final int ROWS = 3;
 
     /** width of text fields */
     private static final int FIELD_WIDTH = 40;

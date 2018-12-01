@@ -33,15 +33,6 @@ public class UI {
     /** Interval between audit checks (milliseconds). */
     private static final int AUDIT_CHECK_INTERVAL = 2000;
 
-    /** audit window dimensions */
-    private static final String FRAME_DIMENSIONS_KEY = "checkstyle.framedimensions";
-
-    /** offset of corner relative to current frame */
-    private static final int FRAME_OFFSET = 20;
-
-    /** determine whether checkstyle audit window is open */
-    private static final String IS_OPEN_KEY = "checkstyle.frameisopen";
-
     /** Private constructor for singleton. */
     private UI(){
         final ActionListener listener = new FilesChangeListener();
@@ -60,6 +51,10 @@ public class UI {
         }
     }
 
+    /**
+     * Add listeners needed by checkstyle to the BlueJ instance.
+     * @param aBlueJ The BlueJ instance to add listeners to
+     */
     public void addListeners(BlueJ aBlueJ){
         // register listeners
         aBlueJ.addApplicationListener(new CheckstyleApplicationListener());
@@ -129,7 +124,8 @@ public class UI {
 
         // location and size
         final String frameDimensions =
-                manager.getExtensionPropertyString(FRAME_DIMENSIONS_KEY, "");
+                manager.getExtensionPropertyString(
+                        Settings.FRAME_DIMENSIONS_KEY, "");
         if (!frameDimensions.equals(""))
         {
             final StringTokenizer tokenizer =
@@ -146,11 +142,13 @@ public class UI {
             if (bluejFrame != null) {
                 corner = bluejFrame.getLocation();
             }
-            corner.translate(FRAME_OFFSET, FRAME_OFFSET);
+
+            int offset = Settings.FRAME_OFFSET;
+            corner.translate(offset, offset);
             aFrame.setLocation(corner);
         }
         if (Boolean.valueOf(manager.getExtensionPropertyString(
-                IS_OPEN_KEY, "false")).booleanValue())
+                Settings.IS_OPEN_KEY, "false")).booleanValue())
         {
             aFrame.setVisible(true);
         }
@@ -165,12 +163,13 @@ public class UI {
         BlueJManager manager = BlueJManager.getInstance();
 
         manager.setExtensionPropertyString(
-                IS_OPEN_KEY, "" + aFrame.isShowing());
+                Settings.IS_OPEN_KEY, "" + aFrame.isShowing());
         final String frameDimensions = (int) aFrame.getLocation().getX() + " "
                 + (int) aFrame.getLocation().getY() + " "
                 + (int) aFrame.getSize().getWidth() + " "
                 + (int) aFrame.getSize().getHeight();
-        manager.setExtensionPropertyString(FRAME_DIMENSIONS_KEY, frameDimensions);
+        manager.setExtensionPropertyString(
+                Settings.FRAME_DIMENSIONS_KEY, frameDimensions);
     }
 
     /**
@@ -219,7 +218,6 @@ public class UI {
         };
         SwingUtilities.invokeLater(update);
     }
-
 
     /**
      * Starts or stops timer.

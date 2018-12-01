@@ -19,15 +19,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 package com.bluejmanager;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import bluej.extensions.BPackage;
 import bluej.extensions.MenuGenerator;
 
+import com.tools.checkstyle.CheckstyleMenuListener;
 import com.tools.pmd.PMD_Menu_Listener;
 
 /**
@@ -44,7 +42,7 @@ public class ExtensionMenu extends MenuGenerator
         final JMenu extMenu = new JMenu("Quality Tools");
 
         final JMenuItem checkMenu = new JMenuItem("Checkstyle");
-        checkMenu.addActionListener(new MenuAction());
+        checkMenu.addActionListener(new CheckstyleMenuListener());
 
         final JMenuItem pmdMenu = new JMenuItem("PMD");
         pmdMenu.addActionListener(new PMD_Menu_Listener());
@@ -63,25 +61,7 @@ public class ExtensionMenu extends MenuGenerator
      */
     public JMenuItem getMenuItem() {
         final JMenuItem item = new JMenuItem("Checkstyle");
-        item.addActionListener(new MenuAction());
+        item.addActionListener(new CheckstyleMenuListener());
         return item;
-    }
-
-    /**
-     * Action listener for the Checkstyle menu item.
-     * Audits files of the current package.
-     * @author Rick Giles
-     * @version 13-May-2003
-     */
-    class MenuAction implements ActionListener
-    {
-        /**
-         * Audits the open projects and shows the results.
-         * @see java.awt.event.ActionListener
-         */
-        public void actionPerformed(ActionEvent aEvent)
-        {
-            QualityAssessmentExtension.getInstance().mCheckstyleUI.showAuditFrame();
-        }
     }
 }
