@@ -99,9 +99,6 @@ public class PMD_Preference_Panel implements PreferenceGenerator {
         defaultCheckbox.setSelected(Boolean.parseBoolean(defaultCB));
     }
 
-    public void onChange(){
-        
-    }
     
     /** Returns the preferences jpanel */
     public JPanel getPanel () {
