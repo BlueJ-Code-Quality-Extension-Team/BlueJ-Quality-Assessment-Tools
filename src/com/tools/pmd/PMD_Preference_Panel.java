@@ -23,6 +23,7 @@ public class PMD_Preference_Panel implements PreferenceGenerator {
     /** The file containing checks for PMD to run */
     private JTextField pmdCheck;
     
+    /** Checkbox to use default pmd location */
     private JCheckBox defaultCheckbox;
 
     /** Path to PMD distribution */
@@ -30,12 +31,14 @@ public class PMD_Preference_Panel implements PreferenceGenerator {
 
     /** Path to file with list of PMD checks to perform. */
     private static final String PROPERTY_PMD_CHECK = "PMD.check";
-
+    
+    /** BlueJ default state property */
     private static final String PROPERTY_PMD_DEFAULT = "PMD.default";
 
     /** Field width for text fields */
     private static final int FIELD_WIDTH = 40;
-
+    
+    /** Constructor */
     public PMD_Preference_Panel() {
         PMDPanel = new JPanel();
         PMDPanel.setLayout(new GridLayout(2,1));
@@ -74,7 +77,8 @@ public class PMD_Preference_Panel implements PreferenceGenerator {
 
         loadValues();
     }
-
+    
+    /** Saves values of PMD_Path, PMD_Check, and PMD_default using the Bluej Manager */
     public void saveValues() {
         BlueJManager manager = BlueJManager.getInstance();
         manager.setExtensionPropertyString(PROPERTY_PMD_PATH, pmdPath.getText());
@@ -82,6 +86,7 @@ public class PMD_Preference_Panel implements PreferenceGenerator {
         manager.setExtensionPropertyString(PROPERTY_PMD_DEFAULT, Boolean.toString(defaultCheckbox.isSelected()) );
     }
 
+    /** Loads values of PMD_Path, PMD_Check, and PMD_default using the Bluej Manager */
     public void loadValues(){
         BlueJManager manger = BlueJManager.getInstance();
 
@@ -97,7 +102,8 @@ public class PMD_Preference_Panel implements PreferenceGenerator {
     public void onChange(){
         
     }
-
+    
+    /** Returns the preferences jpanel */
     public JPanel getPanel () {
         return PMDPanel;
     }
