@@ -2,18 +2,10 @@ package com.tools.pmd;
 
 import com.bluejmanager.*;
 
-import java.util.Set;
-import java.io.File;
-
 class PMD_Runnable_Thread implements Runnable{
 
-    public void run(){
-        try{
-            Set<File> files = BlueJManager.getInstance().getFiles();
-            PMD_Report report = PMD_Report_Builder.getInstance().generatePMDReport(files);
-            QualityAssessmentExtension.getInstance().mPMDReport = report;
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
+  public void run(){
+    PMD_Report report = PMD_Report_Builder.getInstance().generatePMDReport();
+    QualityAssessmentExtension.getInstance().mPMDReport = report;
+  }
 }
