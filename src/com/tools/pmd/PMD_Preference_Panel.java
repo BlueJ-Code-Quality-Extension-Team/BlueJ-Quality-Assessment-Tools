@@ -30,7 +30,7 @@ public class PMD_Preference_Panel implements PreferenceGenerator {
     private static final String PROPERTY_PMD_PATH = "PMD.Path";
 
     /** Path to file with list of PMD checks to perform. */
-    private static final String PROPERTY_PMD_CHECK = "PMD.check";
+    private static final String PROPERTY_PMD_CHECK = "PMD.Check";
     
     /** BlueJ default state property */
     private static final String PROPERTY_PMD_DEFAULT = "PMD.default";
@@ -84,6 +84,7 @@ public class PMD_Preference_Panel implements PreferenceGenerator {
         manager.setExtensionPropertyString(PROPERTY_PMD_PATH, pmdPath.getText());
         manager.setExtensionPropertyString(PROPERTY_PMD_CHECK, pmdCheck.getText());
         manager.setExtensionPropertyString(PROPERTY_PMD_DEFAULT, Boolean.toString(defaultCheckbox.isSelected()) );
+        loadValues();
     }
 
     /** Loads values of PMD_Path, PMD_Check, and PMD_default using the Bluej Manager */

@@ -52,8 +52,10 @@ public class PMD_Report_Builder {
             getDefaultPMDPath();
         else{
             PMDPath = mnger.getProperty("PMD.Path");
+            if(PMDPath == null || PMDPath == "")
+                getDefaultPMDPath();
             String check = mnger.getProperty("PMD.Check");
-            if(check != "" && check!= null && check.toLowerCase().endsWith("xml"))
+            if(check != "" && check!= null && (check.toLowerCase().endsWith("xml") || check.toLowerCase().startsWith("java-")))
                 checks = check;
             else
                 checks = "java-quickstart";
