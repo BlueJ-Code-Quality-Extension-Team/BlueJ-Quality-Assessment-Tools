@@ -186,8 +186,6 @@
       <fileset dir="src" casesensitive="yes" defaultexcludes="yes">
         <filename name="**/*.java"/>
       </fileset>
-      <link href="https://docs.oracle.com/javase/8/docs/api/"/>
-      <link href="http://checkstyle.sourceforge.net/apidocs/"/>
     </javadoc>
   </target>
 
